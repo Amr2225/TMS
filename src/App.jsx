@@ -1,5 +1,14 @@
+import { Sidebar, TasksBoard } from "./Components";
+
 function App() {
-  return <h1 className='underline text-3xl text-indigo-800'>Hello</h1>;
+  return (
+    <div className='flex flex-row gap-4'>
+      <Sidebar />
+      <section className='flex flex-col p-10 w-full'>
+        <TasksBoard />
+      </section>
+    </div>
+  );
 }
 
 export default App;
