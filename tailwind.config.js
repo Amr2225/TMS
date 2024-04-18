@@ -7,6 +7,9 @@ export default {
         poppins: ["Poppins", "sans-serif"],
         spaceGrotesk: ["Space Grotesk", "sans-serif"],
       },
+      boxShadow: {
+        icons: "-2px 0px 8px 1px rgba(0,0,0,0.70)",
+      },
     },
   },
   plugins: [

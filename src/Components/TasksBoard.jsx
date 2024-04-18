@@ -1,8 +1,8 @@
 import { useState } from "react";
-import Column from "./Column";
+import Column from "./TasksBoard/Column";
 
 import { DEFAULT_CARDS } from "../Data/ColumnsData";
-import DeleteArea from "./DeleteArea";
+import DeleteArea from "./TasksBoard/DeleteArea";
 
 const TasksBoard = () => {
   const [cards, setCards] = useState(DEFAULT_CARDS);
