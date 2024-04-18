@@ -154,13 +154,13 @@ const Sidebar = () => {
             ))}
           </div>
         </motion.div>
-        <NavLinks name='Dashboard'>
+        <NavLinks name='Projects List'>
           <BsFillBarChartLineFill className='min-w-8 w-8 scale-125' />
         </NavLinks>
-        <NavLinks name='Projects'>
+        <NavLinks name='Rejected Projects'>
           <GrDocument className='min-w-8 w-8 scale-125' />
         </NavLinks>
-        <NavLinks name='Tasks'>
+        <NavLinks name='Add Projects'>
           <FiAlertCircle className='min-w-8 w-8 scale-125' />
         </NavLinks>
         <NavLinks name='Reporting'>
