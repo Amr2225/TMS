@@ -68,7 +68,7 @@ const Sidebar = () => {
       variants={navVariants}
       animate={navControls}
       initial='close'
-      className='bg-neutral-800 flex flex-col z-10 gap-20 p-5 h-screen shadow shadow-neutral-600 
+      className='bg-neutral-800 flex flex-col z-10 gap-20 p-5 min-h-screen h-auto shadow shadow-neutral-600 
       scroll-bar-webkit'
     >
       <div className='flex flex-row w-full justify-between place-items-center '>
