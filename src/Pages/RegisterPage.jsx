@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
 
 import FormInputs from "../Components/Register Inputs/FormInputs";
 import { validatePassword, validation } from "../Forms Validation/Validation";
@@ -31,7 +32,7 @@ const RegisterPage = () => {
 
   return (
     <main className='grid place-content-center h-screen overflow-hidden'>
-      <div className='w-96 h-96 bg-neutral-800 border border-neutral-700 rounded-md p-4 shadow-xl shadow-neutral-950'>
+      <div className='w-96  bg-neutral-800 border border-neutral-700 rounded-md p-4 shadow-xl shadow-neutral-950'>
         <h1 className='text-neutral-100 text-center pt-2 text-3xl font-bold'>Register</h1>
         <form action='#' className='flex flex-col gap-2 mt-5'>
           <FormInputs registerData={[firstName, setFirstName]} title='First Name' type='text' />
@@ -50,6 +51,15 @@ const RegisterPage = () => {
           >
             Create Account
           </button>
+          <span className='text-sm text-center text-neutral-100/50 '>
+            Have an account
+            <Link
+              to={"/login"}
+              className='underline cursor-pointer hover:bg-neutral-100 hover:text-neutral-950 px-1 py-0.5 transition duration-200 rounded-sm hover:no-underline'
+            >
+              Log in
+            </Link>
+          </span>
         </form>
       </div>
       <AnimatePresence>
