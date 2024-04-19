@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { FaInfo } from "react-icons/fa";
+import { AnimatePresence } from "framer-motion";
 
 import FormInputs from "../Components/Register Inputs/FormInputs";
 import { validatePassword, validation } from "../Forms Validation/Validation";
