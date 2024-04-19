@@ -1,6 +1,6 @@
-import { Sidebar, TasksBoard } from "./Components";
+import { Sidebar, TasksBoard } from "../Components";
 
-function App() {
+const HomePage = () => {
   return (
     <div className='flex flex-row overflow-y-hidden'>
       <Sidebar />
@@ -9,6 +9,6 @@ function App() {
       </section>
     </div>
   );
-}
+};
 
-export default App;
+export default HomePage;
