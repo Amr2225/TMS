@@ -41,6 +41,7 @@ const TasksBoard = () => {
         />
         <DeleteArea setCards={setCards} />
       </div>
+      {/* {isCardMenuActive && <CardMenu />} */}
     </>
   );
 };

@@ -3,11 +3,14 @@ import DropIndicator from "./DropIndicator";
 
 import { LiaCommentSolid } from "react-icons/lia";
 import { useState } from "react";
+import { CardMenu } from "../Modals";
 
-const Card = ({ title, id, column, TransferData }) => {
+const Card = ({ title, id, column, description, TransferData }) => {
   const [isCommentMenuOpen, setIsCommentMenuOpen] = useState(false);
-  const handleClick = () => {
-    alert("test");
+  const [isCardMenuOpen, setIsCardMenuOpen] = useState(false);
+
+  const handleOpenCardMenu = () => {
+    setIsCommentMenuOpen(true);
   };
 
   //The all the developers
@@ -33,7 +36,7 @@ const Card = ({ title, id, column, TransferData }) => {
       <motion.div
         layout
         layoutId={id}
-        onClick={handleClick}
+        onClick={() => setIsCardMenuOpen(true)}
         onDragStart={(e) => TransferData(e, { title, id, column })}
         draggable='true'
         className='cursor-grab rounded border border-neutral-700 bg-neutral-800 p-3 
@@ -79,6 +82,14 @@ const Card = ({ title, id, column, TransferData }) => {
           </div>
         </div>
       </motion.div>
+      {isCardMenuOpen && (
+        <CardMenu
+          taskId={id}
+          title={title}
+          description={description}
+          setIsCardMenuOpen={setIsCardMenuOpen}
+        />
+      )}
     </>
   );
 };

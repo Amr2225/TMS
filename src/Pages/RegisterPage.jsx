@@ -3,7 +3,7 @@ import { AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 
 import FormInputs from "../Components/Register Inputs/FormInputs";
-import { validatePassword, validation } from "../Forms Validation/Validation";
+import { validatePassword, validation, validatedEmail } from "../Forms Validation/Validation";
 import { Message } from "../Components";
 
 const RegisterPage = () => {
@@ -17,10 +17,17 @@ const RegisterPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!validation(firstName, lastName, email, password)) {
+    if (!validation(firstName, lastName, password)) {
       setShowMessage(["All fields are required", "error", true]);
       return;
     }
+
+    if (!validatedEmail(email)) {
+      setShowMessage(["Email is invalid", "error", true]);
+
+      return;
+    }
+
     if (!validatePassword(password, confirmPassword)) {
       setShowMessage(["Password Doesn't Match", "error", true]);
       return;

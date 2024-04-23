@@ -3,7 +3,7 @@ import Card from "./Card";
 import DropIndicator from "./DropIndicator";
 import AddCard from "./AddCard";
 
-const Column = ({ title, headingColor, column, cards, setCards }) => {
+const Column = ({ title, headingColor, column, cards, setCards, setIsCardMenuActive }) => {
   const [active, setActive] = useState(false);
   const filteredCards = cards.filter((data) => data.column === column);
 
@@ -110,7 +110,12 @@ const Column = ({ title, headingColor, column, cards, setCards }) => {
         }`}
       >
         {filteredCards.map((cardData) => (
-          <Card TransferData={TransferData} key={cardData.id} {...cardData} />
+          <Card
+            TransferData={TransferData}
+            key={cardData.id}
+            {...cardData}
+            setIsCardMenuActive={setIsCardMenuActive}
+          />
         ))}
         <DropIndicator beforeId={"-1"} column={column} />
         {column === "backlog" ? <AddCard cards={cards} setCards={setCards} /> : <></>}

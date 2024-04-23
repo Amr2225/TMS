@@ -16,6 +16,7 @@ import {
 } from "./Sidebar/SidebarAnimationVariants";
 
 import { ProjectsData } from "../Data/ProjectsData";
+import { Link } from "react-router-dom";
 
 const Sidebar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -23,6 +24,9 @@ const Sidebar = () => {
   const [isProjectContainerOpen, setIsProjectContainerOpen] = useState(false);
   const [projects, setProjects] = useState(ProjectsData);
 
+  //We will get the projects from a api request to get the projects
+
+  // Animation Controls for the sidebar
   const arrowControls = useAnimationControls();
   const navControls = useAnimationControls();
   const projectsContainerControls = useAnimationControls();
@@ -96,13 +100,13 @@ const Sidebar = () => {
                     className='pr-3 border border-neutral-700 bg-neutral-800 absolute top-12 left-0 z-30 shadow-2xl shadow-neutral-950 text-neutral-100 rounded-md'
                   >
                     <div className='bg-transparent h-5 w-full absolute -top-4 left-0 z-100' />
-                    <a
-                      href='#'
+                    <Link
+                      to={"/login"}
                       className=' p-4 hover:underline flex gap-3 justify-center place-items-center'
                     >
                       <FiLogOut />
                       Logout
-                    </a>
+                    </Link>
                   </motion.div>
                 )}
               </AnimatePresence>

@@ -30,7 +30,7 @@ const AddCard = ({ cards, setCards }) => {
             onChange={(e) => setText(e.target.value)}
             autoFocus
             placeholder='Add new task...'
-            className='w-full rounded border border-violet-400 bg-violet-400/20 p03 text-sm text-neutral-50 placeholder-violet-400 focus:outline-0 p-3 resize-none'
+            className='w-full rounded border border-violet-400 bg-violet-400/20 text-sm text-neutral-50 placeholder-violet-400 focus:outline-0 p-3 resize-none'
           />
           <div className='mt-1.5 flex items-center justify-end gap-1 5'>
             <button
