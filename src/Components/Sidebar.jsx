@@ -24,7 +24,7 @@ const Sidebar = () => {
   const [isProjectContainerOpen, setIsProjectContainerOpen] = useState(false);
   const [projects, setProjects] = useState(ProjectsData);
 
-  //We will get the projects from a api request to get the projects
+  //We will get the projects from an api request to get the projects
 
   // Animation Controls for the sidebar
   const arrowControls = useAnimationControls();

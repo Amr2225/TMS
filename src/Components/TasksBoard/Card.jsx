@@ -9,10 +9,6 @@ const Card = ({ title, id, column, description, TransferData }) => {
   const [isCommentMenuOpen, setIsCommentMenuOpen] = useState(false);
   const [isCardMenuOpen, setIsCardMenuOpen] = useState(false);
 
-  const handleOpenCardMenu = () => {
-    setIsCommentMenuOpen(true);
-  };
-
   //The all the developers
   const developers = [
     {
