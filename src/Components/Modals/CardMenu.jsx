@@ -32,7 +32,7 @@ const CardMenu = ({ title, taskId, description, setIsCardMenuOpen }) => {
 
   return (
     <div
-      onClick={(e) => handleMenuClose(e)}
+      onClick={handleMenuClose}
       className='fixed top-1/2 left-1/2 inset-0 -translate-x-[50%] -translate-y-[50%] grid place-content-center backdrop-blur-sm  h-screen w-screen z-50'
     >
       <div

@@ -2,9 +2,11 @@ import { useState } from "react";
 import Card from "./Card";
 import DropIndicator from "./DropIndicator";
 import AddCard from "./AddCard";
+import { Attachment } from "../Modals";
 
 const Column = ({ title, headingColor, column, cards, setCards, setIsCardMenuActive }) => {
   const [active, setActive] = useState(false);
+  const [isAddAttahcmentActive, setIsAddAttahcmentActive] = useState(false);
   const filteredCards = cards.filter((data) => data.column === column);
 
   const TransferData = (e, card) => {
@@ -91,36 +93,43 @@ const Column = ({ title, headingColor, column, cards, setCards, setIsCardMenuAct
         cardsCopy.splice(insertAtIndex, 0, cardToTransfer);
       }
 
+      if (column === "done") {
+        setIsAddAttahcmentActive(true);
+      }
+
       setCards(cardsCopy);
     }
   };
 
   return (
-    <div className='w-56 shrink-0'>
-      <div className='mb-3 flex items-center justify-between'>
-        <h3 className={`font-medium ${headingColor}`}>{title}</h3>
-        <span className='text-sm text-neutral-400'>{filteredCards.length}</span>
+    <>
+      <div className='w-56 shrink-0'>
+        <div className='mb-3 flex items-center justify-between'>
+          <h3 className={`font-medium ${headingColor}`}>{title}</h3>
+          <span className='text-sm text-neutral-400'>{filteredCards.length}</span>
+        </div>
+        <div
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleOnDrop}
+          className={`h-full w-full transition-colors ${
+            active ? "bg-neutral-800/50" : "bg-neutral-800/0"
+          }`}
+        >
+          {filteredCards.map((cardData) => (
+            <Card
+              TransferData={TransferData}
+              key={cardData.id}
+              {...cardData}
+              setIsCardMenuActive={setIsCardMenuActive}
+            />
+          ))}
+          <DropIndicator beforeId={"-1"} column={column} />
+          {column === "backlog" ? <AddCard cards={cards} setCards={setCards} /> : <></>}
+        </div>
       </div>
-      <div
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleOnDrop}
-        className={`h-full w-full transition-colors ${
-          active ? "bg-neutral-800/50" : "bg-neutral-800/0"
-        }`}
-      >
-        {filteredCards.map((cardData) => (
-          <Card
-            TransferData={TransferData}
-            key={cardData.id}
-            {...cardData}
-            setIsCardMenuActive={setIsCardMenuActive}
-          />
-        ))}
-        <DropIndicator beforeId={"-1"} column={column} />
-        {column === "backlog" ? <AddCard cards={cards} setCards={setCards} /> : <></>}
-      </div>
-    </div>
+      {isAddAttahcmentActive && <Attachment setIsMenuOpen={setIsAddAttahcmentActive} />}
+    </>
   );
 };
 

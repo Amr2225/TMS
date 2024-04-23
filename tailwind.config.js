@@ -29,6 +29,9 @@ export default {
           "&::-webkit-scrollbar-thumb": {
             backgroundColor: "rgb(64, 64, 64 )",
             borderRadius: "20px",
+            "&:hover": {
+              backgroundColor: "rgb(80, 80, 80 )",
+            },
           },
         },
       };
