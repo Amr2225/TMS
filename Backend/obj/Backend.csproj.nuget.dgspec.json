@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\amrga\\Documents\\College\\Level 3\\2nd Semester\\IA\\DevOps\\DevOps Project\\backend\\Backend.csproj": {}
+    "C:\\Users\\amrga\\Documents\\College\\Level 3\\2nd Semester\\IA\\DevOps\\DevOps Project\\Backend\\Backend.csproj": {}
   },
   "projects": {
-    "C:\\Users\\amrga\\Documents\\College\\Level 3\\2nd Semester\\IA\\DevOps\\DevOps Project\\backend\\Backend.csproj": {
+    "C:\\Users\\amrga\\Documents\\College\\Level 3\\2nd Semester\\IA\\DevOps\\DevOps Project\\Backend\\Backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\amrga\\Documents\\College\\Level 3\\2nd Semester\\IA\\DevOps\\DevOps Project\\backend\\Backend.csproj",
+        "projectUniqueName": "C:\\Users\\amrga\\Documents\\College\\Level 3\\2nd Semester\\IA\\DevOps\\DevOps Project\\Backend\\Backend.csproj",
         "projectName": "Backend",
-        "projectPath": "C:\\Users\\amrga\\Documents\\College\\Level 3\\2nd Semester\\IA\\DevOps\\DevOps Project\\backend\\Backend.csproj",
+        "projectPath": "C:\\Users\\amrga\\Documents\\College\\Level 3\\2nd Semester\\IA\\DevOps\\DevOps Project\\Backend\\Backend.csproj",
         "packagesPath": "C:\\Users\\amrga\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\amrga\\Documents\\College\\Level 3\\2nd Semester\\IA\\DevOps\\DevOps Project\\backend\\obj\\",
+        "outputPath": "C:\\Users\\amrga\\Documents\\College\\Level 3\\2nd Semester\\IA\\DevOps\\DevOps Project\\Backend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\amrga\\AppData\\Roaming\\NuGet\\NuGet.Config"
