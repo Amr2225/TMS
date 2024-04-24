@@ -25,6 +25,6 @@ dist-ssr
 
 # .Net directories
 _ReSharper.*
-./backend/bin
-./backend/obj
-./backend/packages
+bin
+obj
+packages
