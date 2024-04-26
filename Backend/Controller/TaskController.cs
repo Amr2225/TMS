@@ -1,5 +1,5 @@
-using Backend.Modals;
-using Backend.Modals.Types;
+using Backend.DTOs;
+using Backend.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controller
@@ -37,7 +37,7 @@ namespace Backend.Controller
             var user = _dbContext.Users.Find(taskDetails.UserId);
 
             tasks.Project = project;
-            string status = Modals.Types.TaskStatus.backlog;
+            string status = Models.Types.TaskStatus.backlog;
 
             AssignedTasks task = new()
             {
@@ -61,10 +61,6 @@ namespace Backend.Controller
             var assignedTasks = _dbContext.GetAllAssignedTasks();
             return new JsonResult(Ok(assignedTasks));
         }
-        public class TaskDetails
-        {
-            public int UserId { get; set; }
-            public int TaskId { get; set; }
-        }
+
     }
 }

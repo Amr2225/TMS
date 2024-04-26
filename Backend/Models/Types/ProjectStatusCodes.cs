@@ -1,4 +1,4 @@
-namespace Backend.Modals.Types
+namespace Backend.Models.Types
 {
     public static class ProjectStatusCodes
     {

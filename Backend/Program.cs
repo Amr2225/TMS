@@ -1,4 +1,5 @@
-using Backend.Modals;
+using Backend.Data;
+using Backend.Models;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,7 @@ builder.Services.AddDbContext<DatabaseContext>(
 
 // Add the Controllers
 builder.Services.AddControllers();
+builder.Services.AddScoped<IDataRepository<Users>, DataRepository<Users>>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

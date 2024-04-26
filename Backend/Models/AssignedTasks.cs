@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Backend.Modals
+namespace Backend.Models
 {
     public class AssignedTasks
     {

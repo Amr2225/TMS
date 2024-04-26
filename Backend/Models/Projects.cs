@@ -1,4 +1,4 @@
-namespace Backend.Modals
+namespace Backend.Models
 {
     public class Projects
     {

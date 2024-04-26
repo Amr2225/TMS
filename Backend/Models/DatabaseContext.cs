@@ -1,7 +1,6 @@
-using System.Collections;
 using Microsoft.EntityFrameworkCore;
 
-namespace Backend.Modals
+namespace Backend.Models
 {
     public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbContext(options)
     {

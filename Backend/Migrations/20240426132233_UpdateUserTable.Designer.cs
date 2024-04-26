@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20240424141554_initial")]
-    partial class initial
+    [Migration("20240426132233_UpdateUserTable")]
+    partial class UpdateUserTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,7 +24,7 @@ namespace Backend.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Backend.Modals.AssignedTasks", b =>
+            modelBuilder.Entity("Backend.Models.AssignedTasks", b =>
                 {
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -45,7 +45,7 @@ namespace Backend.Migrations
                     b.ToTable("AssignedTasks");
                 });
 
-            modelBuilder.Entity("Backend.Modals.Comments", b =>
+            modelBuilder.Entity("Backend.Models.Comments", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -71,7 +71,7 @@ namespace Backend.Migrations
                     b.ToTable("Comments");
                 });
 
-            modelBuilder.Entity("Backend.Modals.Projects", b =>
+            modelBuilder.Entity("Backend.Models.Projects", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -87,7 +87,7 @@ namespace Backend.Migrations
                     b.ToTable("Projects");
                 });
 
-            modelBuilder.Entity("Backend.Modals.ProjectsStatus", b =>
+            modelBuilder.Entity("Backend.Models.ProjectsStatus", b =>
                 {
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -105,7 +105,7 @@ namespace Backend.Migrations
                     b.ToTable("ProjectsStatus");
                 });
 
-            modelBuilder.Entity("Backend.Modals.Tasks", b =>
+            modelBuilder.Entity("Backend.Models.Tasks", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -129,7 +129,7 @@ namespace Backend.Migrations
                     b.ToTable("Tasks");
                 });
 
-            modelBuilder.Entity("Backend.Modals.Users", b =>
+            modelBuilder.Entity("Backend.Models.Users", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -138,18 +138,27 @@ namespace Backend.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FristName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<byte[]>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("Role")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -157,15 +166,15 @@ namespace Backend.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Backend.Modals.AssignedTasks", b =>
+            modelBuilder.Entity("Backend.Models.AssignedTasks", b =>
                 {
-                    b.HasOne("Backend.Modals.Tasks", "Tasks")
+                    b.HasOne("Backend.Models.Tasks", "Tasks")
                         .WithMany()
                         .HasForeignKey("TaskId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Backend.Modals.Users", "Users")
+                    b.HasOne("Backend.Models.Users", "Users")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -176,15 +185,15 @@ namespace Backend.Migrations
                     b.Navigation("Users");
                 });
 
-            modelBuilder.Entity("Backend.Modals.Comments", b =>
+            modelBuilder.Entity("Backend.Models.Comments", b =>
                 {
-                    b.HasOne("Backend.Modals.Tasks", "Tasks")
+                    b.HasOne("Backend.Models.Tasks", "Tasks")
                         .WithMany()
                         .HasForeignKey("TaskId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Backend.Modals.Users", "Users")
+                    b.HasOne("Backend.Models.Users", "Users")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -195,15 +204,15 @@ namespace Backend.Migrations
                     b.Navigation("Users");
                 });
 
-            modelBuilder.Entity("Backend.Modals.ProjectsStatus", b =>
+            modelBuilder.Entity("Backend.Models.ProjectsStatus", b =>
                 {
-                    b.HasOne("Backend.Modals.Projects", "Projects")
+                    b.HasOne("Backend.Models.Projects", "Projects")
                         .WithMany()
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Backend.Modals.Users", "Users")
+                    b.HasOne("Backend.Models.Users", "Users")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -214,9 +223,9 @@ namespace Backend.Migrations
                     b.Navigation("Users");
                 });
 
-            modelBuilder.Entity("Backend.Modals.Tasks", b =>
+            modelBuilder.Entity("Backend.Models.Tasks", b =>
                 {
-                    b.HasOne("Backend.Modals.Projects", "Project")
+                    b.HasOne("Backend.Models.Projects", "Project")
                         .WithMany()
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
