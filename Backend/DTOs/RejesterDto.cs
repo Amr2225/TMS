@@ -1,12 +1,18 @@
-﻿namespace Backend.Dtos
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Backend.Dtos
 {
     public class RejesterDto
     {
-       
-        public string? FristName { get; set; }
-        public string? LastName { get; set; }
-        public string? Email { get; set; }
+        [Required, StringLength(50)]
+        public string FristName { get; set; }
+        [Required, StringLength(50)]
+        public string LastName { get; set; }
+        [Required, StringLength(50)]
+        public string Email { get; set; }
+        [Required, StringLength(50)]
         public string Password { get; set; }
-        public string? Role { get; set; }
+        [Required]
+        public int RoleId { get; set; }
     }
 }

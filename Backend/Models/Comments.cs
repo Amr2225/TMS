@@ -11,14 +11,16 @@ namespace Backend.Models
         public int Id { get; set; }
 
         //Foreign keys
+        [Required]
         public int UserId { get; set; }
+        [Required]
         public int TaskId { get; set; }
 
         //Navigation Properties
         [ForeignKey("UserId")]
-        public virtual Users? Users { get; set; }
+        public virtual Users Users { get; set; }
         [ForeignKey("TaskId")]
-        public virtual Tasks? Tasks { get; set; }
+        public virtual Tasks Tasks { get; set; }
 
         //Rest of the attributes
         public string? Comment { get; set; }

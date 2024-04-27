@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Backend.Models;
-
+using System.Collections;
 
 namespace Backend.Data
 {
@@ -30,12 +30,12 @@ namespace Backend.Data
             await table.AddAsync(entity);
         }
 
-        public async Task UpdateAsync(T entity)
+        public void Update(T entity)
         {
             _dbContext.Entry(entity).State = EntityState.Modified;
         }
 
-        public async Task DeleteAsync(T entity)
+        public void Delete(T entity)
         {
             table.Remove(entity);
         }
@@ -43,6 +43,36 @@ namespace Backend.Data
         public async Task<bool> Save()
         {
             return await _dbContext.SaveChangesAsync() > 0;
+        }
+
+        public async Task<IEnumerable<T>> GetAllUsersAsync()
+        {
+            return await table.Include("Role").ToListAsync();
+        }
+
+        public async Task<IEnumerable<T>> GetAllTasksAsync()
+        {
+            return await table.Include("Project").ToListAsync();
+        }
+
+        public async IAsyncEnumerable<Users?> GetAllDevTasksAsync(int id)
+        {
+            yield return await _dbContext.Users.Include(x => x.AssignedTasks).Where(x => x.Id == id).FirstOrDefaultAsync();
+        }
+
+        public async Task<IEnumerable<T>> GetAllAssignedTasks()
+        {
+            return await table.Include("Users").Include("Tasks").ToListAsync();
+        }
+
+        public async Task<AssignedTasks?> GetByIdAsync(int userId, int taskId)
+        {
+            return await _dbContext.AssignedTasks.Where(x => x.UserId == userId && x.TaskId == taskId).FirstOrDefaultAsync();
+        }
+
+        public async Task<IEnumerable<T>> GetAllCommentsAsync()
+        {
+            return await table.Include("Users").Include("Tasks").ToListAsync();
         }
     }
 }

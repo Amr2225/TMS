@@ -12,6 +12,11 @@ builder.Services.AddDbContext<DatabaseContext>(
 // Add the Controllers
 builder.Services.AddControllers();
 builder.Services.AddScoped<IDataRepository<Users>, DataRepository<Users>>();
+builder.Services.AddScoped<IDataRepository<Projects>, DataRepository<Projects>>();
+builder.Services.AddScoped<IDataRepository<Tasks>, DataRepository<Tasks>>();
+builder.Services.AddScoped<IDataRepository<AssignedTasks>, DataRepository<AssignedTasks>>();
+builder.Services.AddScoped<IDataRepository<Comments>, DataRepository<Comments>>();
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

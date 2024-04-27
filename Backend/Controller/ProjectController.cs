@@ -1,27 +1,34 @@
 using Backend.Models;
+using Backend.Data;
 using Microsoft.AspNetCore.Mvc;
+using Backend.DTOs;
 
 namespace Backend.Controller
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class ProjectController(DatabaseContext dbContext) : ControllerBase
+    public class ProjectController(IDataRepository<Projects> projectRepo) : ControllerBase
     {
-        private readonly DatabaseContext _dbContext = dbContext;
+        private readonly IDataRepository<Projects> _projectRepo = projectRepo;
 
         [HttpPost]
-        public JsonResult Create(Projects project)
+        public async Task<IActionResult> Create(ProjectDto project)
         {
-            _dbContext.Projects.Add(project);
-            _dbContext.SaveChanges();
-            return new JsonResult(Ok(project));
+            Projects projectToAdd = new()
+            {
+                Title = project.Title
+            };
+
+            await _projectRepo.AddAsync(projectToAdd);
+            await _projectRepo.Save();
+            return Ok();
         }
 
         [HttpGet]
-        public JsonResult GetAll()
+        public async Task<IEnumerable<Projects>> GetAll()
         {
-            var projects = _dbContext.Projects.ToList();
-            return new JsonResult(Ok(projects));
+            var projects = await _projectRepo.GetAllAsync();
+            return projects;
         }
     }
 }

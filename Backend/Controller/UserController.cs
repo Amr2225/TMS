@@ -1,27 +1,19 @@
 using Backend.Models;
+using Backend.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controller
 {
     [Route("/api/[controller]/[action]")]
     [ApiController]
-    public class UserController(DatabaseContext dbContext) : ControllerBase
+    public class UserController(IDataRepository<Users> usersRepo) : ControllerBase
     {
-        private readonly DatabaseContext _dbContext = dbContext;
-
-        [HttpPost]
-        public JsonResult Create(Users user)
-        {
-            _dbContext.Users.Add(user);
-            _dbContext.SaveChanges();
-            return new JsonResult(Ok(user));
-        }
+        private readonly IDataRepository<Users> _userRepo = usersRepo;
 
         [HttpGet]
-        public JsonResult GetAll()
+        public async Task<JsonResult> GetAll()
         {
-            var users = _dbContext.Users.ToList();
-            return new JsonResult(Ok(users));
+            return new JsonResult(Ok(await _userRepo.GetAllUsersAsync()));
         }
     }
 }

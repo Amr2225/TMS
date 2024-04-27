@@ -10,93 +10,78 @@ using Backend.Dtos;
 
 namespace Backend.Controller
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
-    public class AuthController(IConfiguration configuration, IDataRepository<Users> userRepository, DatabaseContext dbContext) : ControllerBase
+    public class AuthController(IConfiguration configuration, IAuthRepository AuthRepo) : ControllerBase
     {
         private readonly IConfiguration configuration = configuration;
-        private readonly IDataRepository<Users> _userRepository = userRepository;
+        private readonly IAuthRepository _AuthRepo = AuthRepo;
 
-        private readonly DatabaseContext _dbContext = dbContext;
-
-        [HttpPost("register")]
-        public async Task<ActionResult<Users>> Rejester(RejesterDto request)
+        [HttpPost]
+        public async Task<ActionResult<Users>> Rejester(RejesterDto userToRejester)
         {
-            CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
+            userToRejester.Email = userToRejester.Email.ToLower();
+            if (await _AuthRepo.UserExist(userToRejester.Email))
+            {
+                return BadRequest("Email Already Exists");
+            }
+
             Users user = new()
             {
-                Email = request.Email,
-                FristName = request.FristName,
-                LastName = request.LastName,
-                PasswordHash = passwordHash,
-                PasswordSalt = passwordSalt,
-                Role = request.Role
+                Email = userToRejester.Email,
+                FristName = userToRejester.FristName,
+                LastName = userToRejester.LastName,
+                RoleId = userToRejester.RoleId,
             };
 
-            await _userRepository.AddAsync(user);
-            await _userRepository.Save();
+            await _AuthRepo.Register(user, userToRejester.Password); //The user object and the sent password
 
-            return Ok(user);
+            return Ok();
         }
 
-        [HttpPost("login")]
-        public IActionResult Login(UserDto request)
+        [HttpPost]
+        public async Task<IActionResult> Login(UserDto userToLogin)
         {
-            Users registerdUser;
-            try
-            {
-                registerdUser = _dbContext.Users.Where(x => x.Email == request.Email).First();
+            var user = await _AuthRepo.Login(userToLogin.Email.ToLower(), userToLogin.Password);
 
-            }
-            catch (InvalidOperationException)
-            {
+            if (user == null)
+                return BadRequest("Email or password is invalid");
 
-                return BadRequest("User not found");
-            }
 
-            if (!VerifyPasswordHash(request.Password, registerdUser.PasswordHash, registerdUser.PasswordSalt))
-            {
-                return BadRequest("wrong password");
-            }
-            string token = CreateToken(registerdUser);
+            string token = CreateToken(user);
             return Ok(token);
         }
 
         private string CreateToken(Users User)
         {
-            List<Claim> claims =
-            [
-                new Claim(ClaimTypes.Name, User.Email)
-            ];
+            string userName = User.FristName + " " + User.LastName;
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, User.Id.ToString()),
+                new Claim(ClaimTypes.Email, User.Email),
+                new Claim(ClaimTypes.Name, userName),
+                new Claim(ClaimTypes.Role, User.Role.Role), //This refrences to the role in the roles table
+            };
 
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
                 configuration.GetSection("AppSettings:Token").Value));
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
-            var token = new JwtSecurityToken(
-                claims: claims,
-                expires: DateTime.Now.AddDays(1),
-                signingCredentials: creds);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                NotBefore = DateTime.Now,
+                Expires = DateTime.Now.AddDays(1),
+                SigningCredentials = creds
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
 
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
 
             return jwt;
         }
-
-        private static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
-        {
-            using var hmac = new HMACSHA512();
-            passwordSalt = hmac.Key;
-            passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-        }
-
-        private static bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
-        {
-            using var hmac = new HMACSHA512(passwordSalt);
-            var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-            return computedHash.SequenceEqual(passwordHash);
-        }
-
     }
 }

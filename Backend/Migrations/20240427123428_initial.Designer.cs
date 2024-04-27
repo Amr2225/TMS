@@ -3,6 +3,7 @@ using Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240427123428_initial")]
+    partial class initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,6 +33,9 @@ namespace Backend.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Attachments")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("UserId", "TaskId");
@@ -109,8 +115,7 @@ namespace Backend.Migrations
 
                     b.Property<string>("Role")
                         .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -131,13 +136,7 @@ namespace Backend.Migrations
                     b.Property<int>("ProjectId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
-
                     b.Property<string>("Title")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -188,7 +187,7 @@ namespace Backend.Migrations
             modelBuilder.Entity("Backend.Models.AssignedTasks", b =>
                 {
                     b.HasOne("Backend.Models.Tasks", "Tasks")
-                        .WithMany("AssignedTasks")
+                        .WithMany()
                         .HasForeignKey("TaskId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -245,7 +244,7 @@ namespace Backend.Migrations
             modelBuilder.Entity("Backend.Models.Tasks", b =>
                 {
                     b.HasOne("Backend.Models.Projects", "Project")
-                        .WithMany("Tasks")
+                        .WithMany()
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -264,19 +263,9 @@ namespace Backend.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("Backend.Models.Projects", b =>
-                {
-                    b.Navigation("Tasks");
-                });
-
             modelBuilder.Entity("Backend.Models.Roles", b =>
                 {
                     b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("Backend.Models.Tasks", b =>
-                {
-                    b.Navigation("AssignedTasks");
                 });
 #pragma warning restore 612, 618
         }
