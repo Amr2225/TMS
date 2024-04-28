@@ -8,7 +8,7 @@ const Message = ({ message, status, setMessage }) => {
       initial={{ opacity: 0, x: 15 }}
       animate={{ opacity: 1, x: 0, transition: { duration: 1, type: "spring", damping: 12 } }}
       exit={{ opacity: 0, x: 15 }}
-      onAnimationComplete={() => setMessage(false)}
+      onAnimationComplete={() => setMessage(["", "", false])}
       className={`text-neutral-100 absolute top-0 right-0 m-5  
       ${
         status === "success" ? "bg-green-600" : "bg-red-600"

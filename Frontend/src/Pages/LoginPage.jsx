@@ -1,18 +1,24 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 
 import FormInputs from "../Components/Register Inputs/FormInputs";
 import { validatedEmail, validationLogin } from "../Forms Validation/Validation";
 import { Message } from "../Components";
-import { Link } from "react-router-dom";
+import apis from "../services/api";
+import { setAuthToken, getAuthToken } from "../services/auth/auth";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [showMessage, setShowMessage] = useState(["", "", false]);
+  const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  useEffect(() => {
+    if (getAuthToken().token) navigate("/");
+  }, []);
+
+  const handleLogin = async (e) => {
     e.preventDefault();
     if (!validationLogin(email, password)) {
       setShowMessage(["All fields are required", "error", true]);
@@ -21,8 +27,36 @@ const LoginPage = () => {
       setShowMessage(["Invalid Email format.", "error", true]);
       return;
     }
+
+    try {
+      const res = await apis.auth.post("/Login", {
+        email: email,
+        password: password,
+      });
+      console.log(res.data);
+      const userData = setAuthToken(res.data);
+      //Data to save
+      console.log({
+        email: userData.email,
+        id: userData.nameid,
+        userName: userData.unique_name,
+        role: userData.role,
+      });
+      setShowMessage(["login successfully", "success", true]);
+      if (userData.role == "developer") {
+        setTimeout(() => {
+          navigate("/"); //to be changened later
+        }, 500);
+      } else if (userData.role == "team-leader") {
+        setTimeout(() => {
+          navigate("/"); // to changened later
+        }, 500);
+      }
+    } catch (err) {
+      if (err.status === 400) setShowMessage([err.response.data, "error", true]);
+      else console.error("Error: ", err);
+    }
     //Show the message with success
-    setShowMessage(["login successfully", "success", true]);
   };
 
   return (

@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import FormInputs from "../Components/Register Inputs/FormInputs";
 import { validatePassword, validation, validatedEmail } from "../Forms Validation/Validation";
 import { Message } from "../Components";
+import apis from "../services/api";
+import { getAuthToken } from "../services/auth/auth";
 
 const RegisterPage = () => {
   const [firstName, setFirstName] = useState("");
@@ -12,10 +14,14 @@ const RegisterPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
   const [showMessage, setShowMessage] = useState(["", "", false]);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    if (getAuthToken().token) navigate("/");
+  }, []);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validation(firstName, lastName, password)) {
       setShowMessage(["All fields are required", "error", true]);
@@ -33,8 +39,25 @@ const RegisterPage = () => {
       return;
     }
 
-    //Show the message with success
-    setShowMessage(["Account Created Successfully", "success", true]);
+    //Adding the user to the database
+    await apis.auth
+      .post("/Register", {
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        password: password,
+        roleId: 1,
+      })
+      .then(() => {
+        setShowMessage(["Account Created Successfully", "success", true]); //Show the message with success
+        setTimeout(() => {
+          navigate("/login");
+        }, 1000);
+      })
+      .catch((err) => {
+        if (err.status == 400) setShowMessage([err.response.data, "error", true]);
+        else console.error(err);
+      });
   };
 
   return (

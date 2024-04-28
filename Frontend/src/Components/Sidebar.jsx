@@ -5,6 +5,7 @@ import { GrDocument } from "react-icons/gr";
 import { FiAlertCircle, FiLogOut, FiUsers } from "react-icons/fi";
 import { TbReportSearch } from "react-icons/tb";
 import { FaProjectDiagram } from "react-icons/fa";
+import { removeAuthToken } from "../services/auth/auth";
 
 import NavLinks from "./Sidebar/NavLinks";
 import Projects from "./Sidebar/Projects";
@@ -18,7 +19,7 @@ import {
 import { ProjectsData } from "../Data/ProjectsData";
 import { Link } from "react-router-dom";
 
-const Sidebar = () => {
+const Sidebar = ({ UserName }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isProjectContainerOpen, setIsProjectContainerOpen] = useState(false);
@@ -87,7 +88,7 @@ const Sidebar = () => {
             className='flex justify-center
                 place-items-center font-poppins text-white font-bold text-xl h-full w-full'
           >
-            A
+            A {/* Will be replace by userName[0] */}
           </span>
           {isOpen && (
             <>
@@ -101,6 +102,7 @@ const Sidebar = () => {
                   >
                     <div className='bg-transparent h-5 w-full absolute -top-4 left-0 z-100' />
                     <Link
+                      onClick={() => removeAuthToken()}
                       to={"/login"}
                       className=' p-4 hover:underline flex gap-3 justify-center place-items-center'
                     >

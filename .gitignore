@@ -28,3 +28,4 @@ _ReSharper.*
 bin
 obj
 packages
+Migrations

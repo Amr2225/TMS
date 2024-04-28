@@ -18,7 +18,7 @@ namespace Backend.Controller
         private readonly IAuthRepository _AuthRepo = AuthRepo;
 
         [HttpPost]
-        public async Task<ActionResult<Users>> Rejester(RejesterDto userToRejester)
+        public async Task<ActionResult<Users>> Register(RejesterDto userToRejester)
         {
             userToRejester.Email = userToRejester.Email.ToLower();
             if (await _AuthRepo.UserExist(userToRejester.Email))
@@ -29,7 +29,7 @@ namespace Backend.Controller
             Users user = new()
             {
                 Email = userToRejester.Email,
-                FristName = userToRejester.FristName,
+                FirstName = userToRejester.FirstName,
                 LastName = userToRejester.LastName,
                 RoleId = userToRejester.RoleId,
             };
@@ -54,7 +54,7 @@ namespace Backend.Controller
 
         private string CreateToken(Users User)
         {
-            string userName = User.FristName + " " + User.LastName;
+            string userName = User.FirstName + " " + User.LastName;
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, User.Id.ToString()),

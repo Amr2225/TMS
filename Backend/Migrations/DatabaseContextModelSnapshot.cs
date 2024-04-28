@@ -159,7 +159,7 @@ namespace Backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FristName")
+                    b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -194,7 +194,7 @@ namespace Backend.Migrations
                         .IsRequired();
 
                     b.HasOne("Backend.Models.Users", "Users")
-                        .WithMany()
+                        .WithMany("AssignedTasks")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -275,6 +275,11 @@ namespace Backend.Migrations
                 });
 
             modelBuilder.Entity("Backend.Models.Tasks", b =>
+                {
+                    b.Navigation("AssignedTasks");
+                });
+
+            modelBuilder.Entity("Backend.Models.Users", b =>
                 {
                     b.Navigation("AssignedTasks");
                 });

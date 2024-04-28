@@ -1,6 +1,9 @@
+using System.Text;
 using Backend.Data;
 using Backend.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +11,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<DatabaseContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
+
+// Adding Cors
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowCors", builder =>
+    {
+        builder.WithOrigins("http://localhost:5173").AllowAnyHeader().AllowAnyMethod();
+    });
+});
 
 // Add the Controllers
 builder.Services.AddControllers();
@@ -17,6 +29,22 @@ builder.Services.AddScoped<IDataRepository<Tasks>, DataRepository<Tasks>>();
 builder.Services.AddScoped<IDataRepository<AssignedTasks>, DataRepository<AssignedTasks>>();
 builder.Services.AddScoped<IDataRepository<Comments>, DataRepository<Comments>>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+
+//Add Auth
+builder.Services.AddAuthentication(opt =>
+{
+    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value))
+    };
+});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -31,7 +59,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("AllowCors");
+
 app.UseHttpsRedirection();
+
+app.UseAuthorization();
 
 app.UseAuthorization();
 

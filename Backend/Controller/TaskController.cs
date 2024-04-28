@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace Backend.Controller
 {
-    // [Authorize]
+    [Authorize]
     [Route("api/[controller]/[action]")]
     [ApiController]
     public class TaskController(IDataRepository<Tasks> taskRepo, IDataRepository<AssignedTasks> AssignedTaskRepo, IDataRepository<Users> userRepo) : ControllerBase
