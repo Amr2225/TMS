@@ -6,6 +6,7 @@ import { FiAlertCircle, FiLogOut, FiUsers } from "react-icons/fi";
 import { TbReportSearch } from "react-icons/tb";
 import { FaProjectDiagram } from "react-icons/fa";
 import { removeAuthToken } from "../services/auth/auth";
+import { persistor } from "../Redux/persistor";
 
 import NavLinks from "./Sidebar/NavLinks";
 import Projects from "./Sidebar/Projects";
@@ -18,12 +19,14 @@ import {
 
 import { ProjectsData } from "../Data/ProjectsData";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
-const Sidebar = ({ UserName }) => {
+const Sidebar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isProjectContainerOpen, setIsProjectContainerOpen] = useState(false);
   const [projects, setProjects] = useState(ProjectsData);
+  const { data } = useSelector((state) => state.user);
 
   //We will get the projects from an api request to get the projects
 
@@ -68,6 +71,11 @@ const Sidebar = ({ UserName }) => {
     setIsProjectContainerOpen(!isProjectContainerOpen);
   };
 
+  const handleLogout = () => {
+    removeAuthToken();
+    persistor.purge();
+  };
+
   return (
     <motion.nav
       variants={navVariants}
@@ -88,7 +96,7 @@ const Sidebar = ({ UserName }) => {
             className='flex justify-center
                 place-items-center font-poppins text-white font-bold text-xl h-full w-full'
           >
-            A {/* Will be replace by userName[0] */}
+            {data.userName[0].toUpperCase()}
           </span>
           {isOpen && (
             <>
@@ -102,7 +110,7 @@ const Sidebar = ({ UserName }) => {
                   >
                     <div className='bg-transparent h-5 w-full absolute -top-4 left-0 z-100' />
                     <Link
-                      onClick={() => removeAuthToken()}
+                      onClick={() => handleLogout()}
                       to={"/login"}
                       className=' p-4 hover:underline flex gap-3 justify-center place-items-center'
                     >

@@ -55,8 +55,8 @@ const RegisterPage = () => {
         }, 1000);
       })
       .catch((err) => {
-        if (err.status == 400) setShowMessage([err.response.data, "error", true]);
-        else console.error(err);
+        if (err.response.status == 400) setShowMessage([err.response.data, "error", true]);
+        else console.error("Error", err);
       });
   };
 
@@ -65,12 +65,12 @@ const RegisterPage = () => {
       <div className='w-96  bg-neutral-800 border border-neutral-700 rounded-md p-4 shadow-xl shadow-neutral-950'>
         <h1 className='text-neutral-100 text-center pt-2 text-3xl font-bold'>Register</h1>
         <form action='#' className='flex flex-col gap-2 mt-5'>
-          <FormInputs registerData={[firstName, setFirstName]} title='First Name' type='text' />
-          <FormInputs registerData={[lastName, setLastName]} title='Last Name' type='text' />
-          <FormInputs registerData={[email, setEmail]} title='Email' type='email' />
-          <FormInputs registerData={[password, setPassword]} title='Password' type='password' />
+          <FormInputs Data={[firstName, setFirstName]} title='First Name' type='text' />
+          <FormInputs Data={[lastName, setLastName]} title='Last Name' type='text' />
+          <FormInputs Data={[email, setEmail]} title='Email' type='email' />
+          <FormInputs Data={[password, setPassword]} title='Password' type='password' />
           <FormInputs
-            registerData={[confirmPassword, setConfirmPassword]}
+            Data={[confirmPassword, setConfirmPassword]}
             title='Confirm Password'
             type='password'
           />

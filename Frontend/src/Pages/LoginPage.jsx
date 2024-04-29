@@ -7,11 +7,14 @@ import { validatedEmail, validationLogin } from "../Forms Validation/Validation"
 import { Message } from "../Components";
 import apis from "../services/api";
 import { setAuthToken, getAuthToken } from "../services/auth/auth";
+import { useDispatch } from "react-redux";
+import { setData } from "../Redux/UserReducer";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showMessage, setShowMessage] = useState(["", "", false]);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,13 +38,16 @@ const LoginPage = () => {
       });
       console.log(res.data);
       const userData = setAuthToken(res.data);
-      //Data to save
-      console.log({
-        email: userData.email,
-        id: userData.nameid,
-        userName: userData.unique_name,
-        role: userData.role,
-      });
+      //User Data taken from token
+      dispatch(
+        setData({
+          email: userData.email,
+          id: userData.nameid,
+          userName: userData.unique_name,
+          role: userData.role,
+        })
+      );
+
       setShowMessage(["login successfully", "success", true]);
       if (userData.role == "developer") {
         setTimeout(() => {
@@ -53,10 +59,9 @@ const LoginPage = () => {
         }, 500);
       }
     } catch (err) {
-      if (err.status === 400) setShowMessage([err.response.data, "error", true]);
+      if (err.response.status === 400) setShowMessage([err.response.data, "error", true]);
       else console.error("Error: ", err);
     }
-    //Show the message with success
   };
 
   return (
@@ -64,8 +69,8 @@ const LoginPage = () => {
       <div className='w-96  bg-neutral-800 border border-neutral-700 rounded-md p-4 shadow-xl shadow-neutral-950'>
         <h1 className='text-neutral-100 text-center pt-2 text-3xl font-bold'>Login</h1>
         <form action='#' className='flex flex-col gap-2 mt-5'>
-          <FormInputs registerData={[email, setEmail]} title='Email' type='email' />
-          <FormInputs registerData={[password, setPassword]} title='Password' type='password' />
+          <FormInputs Data={[email, setEmail]} title='Email' type='email' />
+          <FormInputs Data={[password, setPassword]} title='Password' type='password' />
           <button
             type='submit'
             onClick={handleLogin}

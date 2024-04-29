@@ -1,18 +1,13 @@
 import { useState } from "react";
 import { IoEye, IoEyeOff } from "react-icons/io5";
 
-const FormInputs = ({ registerData, loginData, title, type }) => {
+const FormInputs = ({ Data, title, type }) => {
   const [showPassword, setShowPassword] = useState(false);
   let value, setValue;
 
-  //To get the register data
-  if (registerData) {
-    [value, setValue] = registerData;
-  }
-
-  //To get the login data
-  if (loginData) {
-    [value, setValue] = loginData;
+  //To get the  data
+  if (Data) {
+    [value, setValue] = Data;
   }
 
   const handleShowPassword = (e) => {
@@ -22,7 +17,7 @@ const FormInputs = ({ registerData, loginData, title, type }) => {
 
   return (
     <>
-      {registerData && (
+      {Data && (
         <span className='relative'>
           <input
             onChange={(e) => setValue(e.target.value)}
