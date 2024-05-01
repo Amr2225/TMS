@@ -60,7 +60,7 @@ namespace Backend.Controller
                 new Claim(ClaimTypes.NameIdentifier, User.Id.ToString()),
                 new Claim(ClaimTypes.Email, User.Email),
                 new Claim(ClaimTypes.Name, userName),
-                new Claim(ClaimTypes.Role, User.Role.Role), //This refrences to the role in the roles table
+                new Claim(ClaimTypes.Role, User.Role.Id.ToString()), //This refrences to the role in the roles table
             };
 
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(

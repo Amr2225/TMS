@@ -1,10 +1,21 @@
 import { createBrowserRouter } from "react-router-dom";
-import { HomePage, LoginPage, RegisterPage } from "../Pages";
+import { DevHomePage, HomePage, LoginPage, RegisterPage } from "../Pages";
+import { TasksBoard } from "../Components";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <HomePage />,
+    children: [
+      {
+        path: "/dashboard",
+        element: <TasksBoard />,
+      },
+      {
+        path: "/tdashboard",
+        element: <DevHomePage />,
+      },
+    ],
   },
   {
     path: "/login",
@@ -13,6 +24,10 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <RegisterPage />,
+  },
+  {
+    path: "/dev",
+    element: <DevHomePage />,
   },
   {
     path: "*",

@@ -1,103 +1,47 @@
 import { useState } from "react";
+import { useSelector } from "react-redux";
+
 import Card from "./Card";
 import DropIndicator from "./DropIndicator";
 import AddCard from "./AddCard";
 import { Attachment } from "../Modals";
+import { useUpdateTaskMutation } from "../../Redux/apis/taskApi";
 
-const Column = ({ title, headingColor, column, cards, setCards, setIsCardMenuActive }) => {
+const Column = ({ title, headingColor, column, setIsCardMenuActive }) => {
   const [active, setActive] = useState(false);
   const [isAddAttahcmentActive, setIsAddAttahcmentActive] = useState(false);
-  const filteredCards = cards.filter((data) => data.column === column);
 
-  const TransferData = (e, card) => {
-    e.dataTransfer.setData("cardId", card.id);
-    // console.log(e.dataTransfer.types);
-  };
-
-  const highlightIndicator = (e) => {
-    e.preventDefault();
-    const indicators = getIndicators();
-    clearHighlights(indicators);
-    const nearsetIndicator = getNearsetIndicator(e, indicators);
-    nearsetIndicator.element.style.opacity = "1";
-  };
-
-  const getNearsetIndicator = (e, indicators) => {
-    const DISTANCE_OFFSET = 50;
-    const nearsetIndicator = indicators.reduce(
-      (closet, child) => {
-        const box = child.getBoundingClientRect();
-        const offset = e.clientY - (box.top + DISTANCE_OFFSET);
-        if (offset < 0 && offset > closet.offset) {
-          return { offset: offset, element: child };
-        } else {
-          return closet;
-        }
-      },
-      {
-        offset: Number.NEGATIVE_INFINITY,
-        element: indicators[indicators.length - 1],
-      }
-    );
-    return nearsetIndicator;
-  };
-
-  const getIndicators = () => {
-    return Array.from(document.querySelectorAll(`[data-column=${column}]`));
-  };
-
-  const clearHighlights = (elements) => {
-    const indicators = elements || getIndicators();
-
-    indicators.forEach((indictor) => {
-      indictor.style.opacity = "0";
-    });
-  };
+  const [updateTask] = useUpdateTaskMutation();
+  const { taskData } = useSelector((state) => state.tasks);
+  const filteredCards = taskData.filter((data) => data.status === column);
 
   const handleDragOver = (e) => {
     e.preventDefault();
-    highlightIndicator(e);
     setActive(true);
   };
 
   const handleDragLeave = () => {
     setActive(false);
-    clearHighlights();
   };
 
   const handleOnDrop = (e) => {
     setActive(false);
-    clearHighlights();
 
-    const cardId = e.dataTransfer.getData("cardId"); //The card that we want to transfer
-    const indicators = getIndicators();
-    const { element } = getNearsetIndicator(e, indicators);
-    const position = element.dataset.before || "-1";
-    console.log(position);
+    const cardId = e.dataTransfer.getData("cardId"); //The cardId of the card that is being dragged
+    const status = e.dataTransfer.getData("cardStatus"); //The cardStatus of the card that is being dragged
 
-    if (position !== cardId) {
-      let cardsCopy = [...cards];
-      let cardToTransfer = cardsCopy.find((card) => card.id === parseInt(cardId));
+    //Not placing the card in the same position
+    if (column !== status) {
+      let cardsCopy = [...taskData];
+      let cardToTransfer = cardsCopy.find((card) => card.id === +cardId);
 
-      cardToTransfer = { ...cardToTransfer, column };
-      console.log(cardsCopy);
-      cardsCopy = cardsCopy.filter((card) => card.id !== +cardId); // To remove the card form the old position
-      console.log(cardsCopy);
-
-      if (position === "-1") {
-        cardsCopy.push(cardToTransfer);
-      } else {
-        const insertAtIndex = cardsCopy.findIndex((element) => element.id === parseInt(position));
-        console.log(insertAtIndex);
-
-        cardsCopy.splice(insertAtIndex, 0, cardToTransfer);
-      }
+      cardToTransfer = { ...cardToTransfer, status: column }; //change the column of the card
 
       if (column === "done") {
         setIsAddAttahcmentActive(true);
       }
 
-      setCards(cardsCopy);
+      updateTask({ ...cardToTransfer, projectId: 1 }); //Project id will be passed as a prop
     }
   };
 
@@ -117,15 +61,10 @@ const Column = ({ title, headingColor, column, cards, setCards, setIsCardMenuAct
           }`}
         >
           {filteredCards.map((cardData) => (
-            <Card
-              TransferData={TransferData}
-              key={cardData.id}
-              {...cardData}
-              setIsCardMenuActive={setIsCardMenuActive}
-            />
+            <Card key={cardData.id} setIsCardMenuActive={setIsCardMenuActive} {...cardData} />
           ))}
-          <DropIndicator beforeId={"-1"} column={column} />
-          {column === "backlog" ? <AddCard cards={cards} setCards={setCards} /> : <></>}
+          <DropIndicator active={active} />
+          {column === "backlog" ? <AddCard /> : <></>}
         </div>
       </div>
       {isAddAttahcmentActive && <Attachment setIsMenuOpen={setIsAddAttahcmentActive} />}

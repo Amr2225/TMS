@@ -50,9 +50,9 @@ namespace Backend.Data
             return await table.Include("Role").ToListAsync();
         }
 
-        public async Task<IEnumerable<T>> GetAllTasksAsync()
+        public async Task<IEnumerable<Tasks>> GetAllTasksAsync(int projectId)
         {
-            return await table.Include("Project").ToListAsync();
+            return await _dbContext.Tasks.Where(x => x.ProjectId == projectId).ToListAsync();
         }
 
         public async IAsyncEnumerable<Users?> GetAllDevTasksAsync(int id)

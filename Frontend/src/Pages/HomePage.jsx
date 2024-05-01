@@ -1,49 +1,45 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 import { Sidebar, TasksBoard } from "../Components";
-import { getAuthToken } from "../services/auth/auth";
-import apis from "../services/api";
 import { LoadingSpinner } from "../Components";
+import { useGetTasksQuery } from "../Redux/apis/taskApi";
 
 const HomePage = () => {
-  const [isAuthroized, setIsAuthrozed] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
+  // const [isAuthroized, setIsAuthrozed] = useState(false);
+  const { isAuthed } = useSelector((state) => state.auth);
+  const { taskData } = useSelector((state) => state.tasks);
+  const { userData } = useSelector((state) => state.user);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        const { data } = await apis.tasks.get("/GetAllTasks", {
-          headers: { Authorization: `Bearer ${getAuthToken().token}` }, // Sending the token
-        });
-        console.log(data);
-        setIsAuthrozed(true);
-        setIsLoading(false);
-      } catch (err) {
-        setIsLoading(false);
-        if (err.StatusCode == 401) setIsAuthrozed(false);
-        navigate("/login");
-      }
-    };
+  if (!isAuthed) {
+    return <Navigate to='/login' />;
+  }
 
-    fetchData();
-  }, []);
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const { data, isLoading, isError } = useGetTasksQuery(
+    { id: userData.id, role: userData.role, projectId: 1 },
+    { refetchOnMountOrArgChange: true }
+  );
+
+  console.log("Fetched data", data);
+  console.log("saved Data", taskData);
 
   if (isLoading) {
     return <LoadingSpinner />;
   }
 
-  return isAuthroized ? (
+  if (isError) {
+    return <h1>Error happend</h1>;
+  }
+
+  return (
     <div className='flex flex-row overflow-y-hidden '>
       <Sidebar />
       <section className='flex flex-col p-10 pr-0 pl-5 w-full overflow-y-hidden'>
-        <TasksBoard />
+        {/* <TasksBoard /> */}
+        <Outlet />
       </section>
     </div>
-  ) : (
-    <h1>Not Authed</h1>
   );
 };
 

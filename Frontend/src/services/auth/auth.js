@@ -1,4 +1,5 @@
 import { jwtDecode } from "jwt-decode";
+import { persistor } from "../../Redux/store";
 
 export const setAuthToken = (token) => {
   localStorage.setItem("token", token);
@@ -23,4 +24,5 @@ export const removeAuthToken = () => {
   if (localStorage.getItem("token")) {
     localStorage.removeItem("token");
   }
+  persistor.purge();
 };

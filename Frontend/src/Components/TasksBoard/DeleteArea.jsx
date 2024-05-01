@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { FaFire, FaTrash } from "react-icons/fa";
+import { useDeleteTaskMutation } from "../../Redux/apis/taskApi";
 
-const DeleteArea = ({ setCards }) => {
+const DeleteArea = () => {
   const [active, setActive] = useState(false);
+  const [deleteTask] = useDeleteTaskMutation();
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -15,7 +17,7 @@ const DeleteArea = ({ setCards }) => {
 
   const hanldeOnDrop = (e) => {
     const cardIdToRemove = +e.dataTransfer.getData("cardId"); // unary plus operator to convert string to number
-    setCards((oldData) => oldData.filter((card) => card.id !== cardIdToRemove));
+    deleteTask(cardIdToRemove);
     setActive(false);
   };
 

@@ -2,11 +2,11 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useAnimationControls } from "framer-motion";
 import { BsFillBarChartLineFill } from "react-icons/bs";
 import { GrDocument } from "react-icons/gr";
+import { Link } from "react-router-dom";
 import { FiAlertCircle, FiLogOut, FiUsers } from "react-icons/fi";
 import { TbReportSearch } from "react-icons/tb";
 import { FaProjectDiagram } from "react-icons/fa";
 import { removeAuthToken } from "../services/auth/auth";
-import { persistor } from "../Redux/persistor";
 
 import NavLinks from "./Sidebar/NavLinks";
 import Projects from "./Sidebar/Projects";
@@ -17,18 +17,17 @@ import {
   projectsContainerVariants,
 } from "./Sidebar/SidebarAnimationVariants";
 
-import { ProjectsData } from "../Data/ProjectsData";
-import { Link } from "react-router-dom";
+import { useGetProjectsQuery } from "../Redux/apis/projectsApi";
 import { useSelector } from "react-redux";
 
 const Sidebar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isProjectContainerOpen, setIsProjectContainerOpen] = useState(false);
-  const [projects, setProjects] = useState(ProjectsData);
-  const { data } = useSelector((state) => state.user);
 
-  //We will get the projects from an api request to get the projects
+  const { projectsData } = useSelector((state) => state.projects);
+  const { userData } = useSelector((state) => state.user);
+  useGetProjectsQuery();
 
   // Animation Controls for the sidebar
   const arrowControls = useAnimationControls();
@@ -73,7 +72,6 @@ const Sidebar = () => {
 
   const handleLogout = () => {
     removeAuthToken();
-    persistor.purge();
   };
 
   return (
@@ -96,7 +94,7 @@ const Sidebar = () => {
             className='flex justify-center
                 place-items-center font-poppins text-white font-bold text-xl h-full w-full'
           >
-            {data.userName[0].toUpperCase()}
+            {userData.userName[0].toUpperCase()}
           </span>
           {isOpen && (
             <>
@@ -163,7 +161,7 @@ const Sidebar = () => {
             </p>
           </div>
           <div className='flex flex-col gap-3 pl-11 mt-2 w-full '>
-            {projects.map((project) => (
+            {projectsData.map((project) => (
               <Projects key={project.id} {...project} />
             ))}
           </div>

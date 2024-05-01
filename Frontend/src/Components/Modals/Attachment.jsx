@@ -8,6 +8,7 @@ const Attachment = ({ setIsMenuOpen }) => {
   const containerRef = useRef(null);
 
   const handleMenuClose = (e) => {
+    //If clicked outside the container borders closes the modal
     if (containerRef.current && !containerRef.current.contains(e.target)) {
       setIsMenuOpen(false);
     }

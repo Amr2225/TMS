@@ -27,6 +27,7 @@ namespace Backend.Controller
             {
                 Title = task.Title,
                 Description = task.Description,
+                Status = task.Status,
                 ProjectId = task.ProjectId,
             };
 
@@ -37,14 +38,15 @@ namespace Backend.Controller
         }
 
         [HttpGet]
-        public async Task<JsonResult> GetAllTasks()
+        public async Task<JsonResult> GetAllTasks(int projectId)
         {
-            return new JsonResult(Ok(await _taskRepo.GetAllTasksAsync()));
+            return new JsonResult(Ok(await _taskRepo.GetAllTasksAsync(projectId)));
         }
+
         [HttpGet]
-        public async Task<JsonResult> GetTasks(int userId, int role)
+        public async Task<JsonResult> GetTasks(int userId, int role, int projectId)
         {
-            var tasks = await _taskRepo.GetAllAsync();
+            var tasks = await _taskRepo.GetAllTasksAsync(projectId);
             if (tasks == null)
                 return new JsonResult(NotFound());
 
@@ -91,13 +93,14 @@ namespace Backend.Controller
             if (updatedTask == null)
                 return BadRequest(); // Return 400 Bad Request if the request body is null or if the IDs don't match
 
-            var taskToUpdate = await _taskRepo.GetByIdAsync(updatedTask.Id ?? 0); //null-coalescing operator to provide a default
+            var taskToUpdate = await _taskRepo.GetByIdAsync(updatedTask.Id ?? 0); //null-coalescing operator to provide a default value
 
             if (taskToUpdate == null)
                 return NotFound(); // Return 404 if project with given ID is not found
 
             // Update the properties of the Task
             taskToUpdate.Title = updatedTask.Title;
+            taskToUpdate.Status = updatedTask.Status;
             taskToUpdate.Description = updatedTask.Description;
             taskToUpdate.ProjectId = updatedTask.ProjectId;
 
@@ -138,7 +141,15 @@ namespace Backend.Controller
             };
 
             await _assignedTasksRepo.AddAsync(assignedTask);
-            await _assignedTasksRepo.Save();
+            try
+            {
+
+                await _assignedTasksRepo.Save();
+            }
+            catch (Microsoft.EntityFrameworkCore.DbUpdateException) //To check if the user is already assigned to the task
+            {
+                return BadRequest("User Already Assigned");
+            }
 
             return Ok();
         }

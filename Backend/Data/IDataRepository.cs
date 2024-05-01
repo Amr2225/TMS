@@ -10,7 +10,7 @@ namespace Backend.Data
         void Update(T entity);
         void Delete(T entity);
         Task<bool> Save();
-        Task<IEnumerable<T>> GetAllTasksAsync();
+        Task<IEnumerable<Tasks>> GetAllTasksAsync(int projectId);
         IAsyncEnumerable<Users?> GetAllDevTasksAsync(int id);
         Task<IEnumerable<T>> GetAllUsersAsync();
         Task<IEnumerable<T>> GetAllAssignedTasks();
