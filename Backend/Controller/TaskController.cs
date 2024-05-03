@@ -5,11 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 using Backend.DTOs.Sent;
 using backend.Helpers;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Extensions.Configuration.UserSecrets;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Backend.Controller
 {
-    // [Authorize]
+    [Authorize]
     [Route("api/[controller]/[action]")]
     [ApiController]
     public class TaskController(IDataRepository<Tasks> taskRepo, IDataRepository<AssignedTasks> AssignedTaskRepo, IDataRepository<Users> userRepo) : ControllerBase

@@ -2,7 +2,16 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const commnetsApi = createApi({
   reducerPath: "commentsApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:5164/api/Comment/" }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: "http://localhost:5164/api/Comment/",
+    prepareHeaders: (headers, { getState }) => {
+      const token = getState().user.token;
+      if (token) {
+        headers.set("Authorization", "Bearer " + token);
+      }
+      return headers;
+    },
+  }),
   tagTypes: ["comments"],
   endpoints: (builder) => ({
     // READ

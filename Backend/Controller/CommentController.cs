@@ -1,11 +1,12 @@
-
 using Backend.Data;
 using Backend.DTOs;
 using Backend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controller
 {
+    [Authorize]
     [Route("api/[controller]/[action]")]
     public class CommentController(IDataRepository<Comments> commentRepo) : ControllerBase
     {

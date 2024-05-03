@@ -2,10 +2,11 @@ using Backend.Models;
 using Backend.Data;
 using Microsoft.AspNetCore.Mvc;
 using Backend.DTOs;
-using System.Collections;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Backend.Controller
 {
+    [Authorize]
     [Route("api/[controller]/[action]")]
     [ApiController]
     public class ProjectController(IDataRepository<Projects> projectRepo, IDataRepository<ProjectsStatus> assignedProjectsRepo) : ControllerBase
