@@ -198,10 +198,10 @@ const CardMenu = ({ title, taskId, status, description, setIsCardMenuOpen }) => 
           </div>
         </form>
         {/* End of Add Comment Section */}
+        {isAttachmentMenuActive && (
+          <Attachment setIsMenuOpen={setIsAttachmentMenuActive} taskId={taskId} />
+        )}
       </motion.div>
-      {isAttachmentMenuActive && (
-        <Attachment setIsMenuOpen={setIsAttachmentMenuActive} taskId={taskId} />
-      )}
     </div>
   );
 };
