@@ -2,11 +2,13 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { FiPlus } from "react-icons/fi";
 import { useCreateTaskMutation } from "../../Redux/apis/taskApi";
+import { useParams } from "react-router-dom";
 
 const AddCard = () => {
   const [text, setText] = useState("");
   const [active, setIsActive] = useState(false);
   const [createTask] = useCreateTaskMutation();
+  const params = useParams();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,7 +18,7 @@ const AddCard = () => {
       title: text.trim(),
       status: "backlog",
       description: "",
-      projectId: 1,
+      projectId: params.projectId,
     });
 
     setIsActive(false);

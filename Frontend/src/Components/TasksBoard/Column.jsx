@@ -6,13 +6,18 @@ import DropIndicator from "./DropIndicator";
 import AddCard from "./AddCard";
 import { Attachment } from "../Modals";
 import { useUpdateTaskMutation } from "../../Redux/apis/taskApi";
+import { useParams } from "react-router-dom";
 
 const Column = ({ title, headingColor, column, setIsCardMenuActive }) => {
   const [active, setActive] = useState(false);
+  const [taskId, setTaskId] = useState(null);
   const [isAddAttahcmentActive, setIsAddAttahcmentActive] = useState(false);
 
   const [updateTask] = useUpdateTaskMutation();
   const { taskData } = useSelector((state) => state.tasks);
+  const { userData } = useSelector((state) => state.user);
+  const params = useParams();
+
   const filteredCards = taskData.filter((data) => data.status === column);
 
   const handleDragOver = (e) => {
@@ -38,10 +43,13 @@ const Column = ({ title, headingColor, column, setIsCardMenuActive }) => {
       cardToTransfer = { ...cardToTransfer, status: column }; //change the column of the card
 
       if (column === "done") {
-        setIsAddAttahcmentActive(true);
+        if (userData.role === "1") {
+          setTaskId(cardId);
+          setIsAddAttahcmentActive(true);
+        }
       }
 
-      updateTask({ ...cardToTransfer, projectId: 1 }); //Project id will be passed as a prop
+      updateTask({ ...cardToTransfer, projectId: params.projectId }); //Project id will be passed as a prop
     }
   };
 
@@ -64,10 +72,12 @@ const Column = ({ title, headingColor, column, setIsCardMenuActive }) => {
             <Card key={cardData.id} setIsCardMenuActive={setIsCardMenuActive} {...cardData} />
           ))}
           <DropIndicator active={active} />
-          {column === "backlog" ? <AddCard /> : <></>}
+          {userData.role === "2" && column === "backlog" ? <AddCard /> : <></>}
         </div>
       </div>
-      {isAddAttahcmentActive && <Attachment setIsMenuOpen={setIsAddAttahcmentActive} />}
+      {isAddAttahcmentActive && (
+        <Attachment setIsMenuOpen={setIsAddAttahcmentActive} taskId={taskId} />
+      )}
     </>
   );
 };

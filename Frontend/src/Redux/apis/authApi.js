@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { setAuthToken } from "../../services/auth/auth";
-import { setData } from "../reducers/UserReducer";
-import { setAuth } from "../reducers/authReducer";
+import { setAuthToken } from "../reducers/UserReducer";
+// import { setData } from "../reducers/UserReducer";
+// import { setAuth } from "../reducers/authReducer";
 
 const authApi = createApi({
   reducerPath: "authApi",
@@ -24,18 +24,9 @@ const authApi = createApi({
       onQueryStarted: async (arg, { queryFulfilled, dispatch }) => {
         try {
           const { data } = await queryFulfilled;
-          const userData = setAuthToken(data);
-          dispatch(
-            setData({
-              email: userData.email,
-              id: userData.nameid,
-              userName: userData.unique_name,
-              role: userData.role,
-            })
-          );
-          dispatch(setAuth(true));
+          dispatch(setAuthToken(data));
         } catch (err) {
-          return;
+          console.error("Error ", err);
         }
       },
     }),

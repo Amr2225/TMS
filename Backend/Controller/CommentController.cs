@@ -11,8 +11,10 @@ namespace Backend.Controller
     {
         private readonly IDataRepository<Comments> _commentRepo = commentRepo;
 
+        //Dev and Team Leader APIs
+        //CREATE
         [HttpPost]
-        public async Task<IActionResult> Create(CommentDto newComment)
+        public async Task<IActionResult> Create([FromBody] CommentDto newComment)
         {
             if (newComment == null)
                 return BadRequest();
@@ -30,12 +32,14 @@ namespace Backend.Controller
             return Ok();
         }
 
+        //READ
         [HttpGet]
-        public async Task<IEnumerable<Comments>> GetComments()
+        public async Task<IEnumerable<Comments>> GetComments(int taskId)
         {
-            return await _commentRepo.GetAllCommentsAsync();
+            return await _commentRepo.GetAllCommentsAsync(taskId);
         }
 
+        //UPDATE
         [HttpPost]
         public async Task<IActionResult> UpdateComment(UpdateCommentDto updatedComment)
         {
@@ -54,6 +58,7 @@ namespace Backend.Controller
             return Ok();
         }
 
+        //DELETE
         [HttpDelete]
         public async Task<IActionResult> DeleteComment(int id)
         {

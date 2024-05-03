@@ -1,6 +1,7 @@
 using Backend.Models;
 using Backend.Data;
 using Microsoft.AspNetCore.Mvc;
+using Backend.DTOs;
 
 namespace Backend.Controller
 {
@@ -10,10 +11,16 @@ namespace Backend.Controller
     {
         private readonly IDataRepository<Users> _userRepo = usersRepo;
 
+
+        //Team Leader API
         [HttpGet]
         public async Task<JsonResult> GetAll()
         {
-            return new JsonResult(Ok(await _userRepo.GetAllUsersAsync()));
+            return new JsonResult(Ok(await _userRepo.GetAllDevsAsync()));
         }
+
+
+
     }
+
 }

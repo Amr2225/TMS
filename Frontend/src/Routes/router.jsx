@@ -1,19 +1,61 @@
 import { createBrowserRouter } from "react-router-dom";
-import { DevHomePage, HomePage, LoginPage, RegisterPage } from "../Pages";
-import { TasksBoard } from "../Components";
+import {
+  HomePage,
+  LoginPage,
+  RegisterPage,
+  DevProjectList,
+  RejectProjects,
+  AddProjects,
+  AssignDevelopers,
+  ViewAttachments,
+} from "../Pages";
+
+import { TasksBoard, AuthGuard } from "../Components";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <HomePage />,
+    element: <AuthGuard />,
     children: [
       {
-        path: "/dashboard",
-        element: <TasksBoard />,
+        path: "/teamleader",
+        element: <HomePage />, //Change its name later
+        children: [
+          {
+            path: "/teamleader/dashboard/:projectId",
+            element: <TasksBoard />,
+          },
+          {
+            path: "/teamleader/AssignDevs/:projectId",
+            element: <AssignDevelopers />,
+          },
+          {
+            path: "/teamleader/addprojects",
+            element: <AddProjects />,
+          },
+          {
+            path: "/teamleader/view-attachments",
+            element: <ViewAttachments />,
+          },
+        ],
       },
       {
-        path: "/tdashboard",
-        element: <DevHomePage />,
+        path: "/dev",
+        element: <HomePage />,
+        children: [
+          {
+            path: "/dev/dashboard/:projectId",
+            element: <TasksBoard />,
+          },
+          {
+            path: "/dev/projectlist",
+            element: <DevProjectList />,
+          },
+          {
+            path: "/dev/rejectedlist",
+            element: <RejectProjects />,
+          },
+        ],
       },
     ],
   },
@@ -24,10 +66,6 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <RegisterPage />,
-  },
-  {
-    path: "/dev",
-    element: <DevHomePage />,
   },
   {
     path: "*",

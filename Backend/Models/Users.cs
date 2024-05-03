@@ -1,3 +1,4 @@
+using System.Collections;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
@@ -21,5 +22,7 @@ namespace Backend.Models
 
         [JsonIgnore] //To prevent possible cycle
         public ICollection<AssignedTasks>? AssignedTasks { get; set; }
+        [JsonIgnore] // To prevent possible cycle
+        public ICollection<ProjectsStatus>? AssignedProjects { get; set; }
     }
 }

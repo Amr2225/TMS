@@ -1,51 +1,20 @@
+import { useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 import { LiaCommentSolid } from "react-icons/lia";
-import { useState } from "react";
-import { CardMenu } from "../Modals";
+import { AssignTask, CardMenu } from "../Modals";
+import { useGetCommnetsQuery } from "../../Redux/apis/commentsApi";
+import { useGetAssignedDevsQuery } from "../../Redux/apis/taskApi";
 
-const Card = ({ title, id, status, description }) => {
+const Card = ({ title, id, status, description, editable }) => {
   const [isCommentMenuOpen, setIsCommentMenuOpen] = useState(false);
   const [isCardMenuOpen, setIsCardMenuOpen] = useState(false);
+  const [isAssignTaskMenuOpen, setIsAssignTaskMenuOpen] = useState(false);
 
-  //The all the developers
-  const developers = [
-    {
-      id: 1,
-      name: "ziad Mohamed",
-      taskId: 4,
-    },
-    {
-      id: 2,
-      name: "Walid",
-      taskId: 3,
-    },
-    {
-      id: 2,
-      name: "Samir",
-      taskId: 3,
-    },
-    {
-      id: 2,
-      name: "Hisham",
-      taskId: 3,
-    },
-    {
-      id: 2,
-      name: "Amr",
-      taskId: 3,
-    },
-    {
-      id: 2,
-      name: "Ali Khaled",
-      taskId: 3,
-    },
-    {
-      id: 2,
-      name: "Marwan",
-      taskId: 3,
-    },
-  ];
+  const { data: allCommentsData, isSuccess } = useGetCommnetsQuery(+id);
+  const { data: assignedDevs, isSuccess: isAssignedDevsSuccess } = useGetAssignedDevsQuery(+id);
+
+  const AssignedMenuRef = useRef(null);
 
   const TransferData = (e, cardData) => {
     e.dataTransfer.setData("cardId", cardData.id);
@@ -53,40 +22,55 @@ const Card = ({ title, id, status, description }) => {
   };
 
   // Assigned developers to each task
-  const assignedDevelopers = developers.filter((developer) => developer.taskId === id);
-  const firstFive = assignedDevelopers.slice(0, 5);
-  const restCount = assignedDevelopers.slice(5).reduce((acc) => acc + 1, 0);
+  let firstFive;
+  let restCount;
+  if (isAssignedDevsSuccess) {
+    firstFive = assignedDevs.slice(0, 5);
+    restCount = assignedDevs.slice(5).reduce((acc) => acc + 1, 0);
+  }
+
+  const handleOpenMenus = (e) => {
+    if (AssignedMenuRef.current && e.target === AssignedMenuRef.current) {
+      setIsAssignTaskMenuOpen(true);
+    } else {
+      editable && setIsCardMenuOpen(true);
+    }
+  };
 
   return (
     <>
       <motion.div
         layout
         layoutId={id}
-        onClick={() => setIsCardMenuOpen(true)}
+        onClick={handleOpenMenus}
         onDragStart={(e) => TransferData(e, { id, status })}
-        draggable='true'
-        className='cursor-grab rounded border border-neutral-700 bg-neutral-800 p-3 
-      active:cursor-grabbing mb-2'
+        draggable={editable}
+        className={`${
+          editable
+            ? "cursor-grab rounded border border-neutral-700 bg-neutral-800 p-3 active:cursor-grabbing mb-2"
+            : "cursor-not-allowed rounded border border-red-900 bg-neutral-800 p-3  mb-2"
+        }`}
       >
         <p className='text-sm text-neutral-100'>{title}</p>
         <div className='flex justify-between mt-1'>
           <div className='flex ml-2'>
-            {firstFive.map((developer) => (
-              <span
-                key={developer.id}
-                title={developer.name}
-                className={`w-5 h-5 shadow-icons -ml-2 bg-neutral-50 text-neutral-950 rounded-full grid place-content-center text-xs hover:z-50 hover:scale-105 transition duration-200`}
-              >
-                {developer.name[0].toUpperCase()}
-              </span>
-            ))}
-            {restCount >= 1 && (
-              <span
-                className={`w-5 h-5 shadow-icons -ml-2  bg-violet-600/95 hover:bg-violet-500 cursor-pointer text-neutral-50 rounded-full grid place-content-center text-xs`}
-              >
-                {"+" + restCount}
-              </span>
-            )}
+            {isAssignedDevsSuccess &&
+              firstFive.map((developer) => (
+                <span
+                  key={developer.id}
+                  title={developer.userName}
+                  className={`w-5 h-5 shadow-icons -ml-2 bg-neutral-50 text-neutral-950 rounded-full grid place-content-center text-xs hover:z-50 hover:scale-105 transition duration-200`}
+                >
+                  {developer.userName[0].toUpperCase()}
+                </span>
+              ))}
+
+            <span
+              ref={AssignedMenuRef}
+              className={`w-5 h-5 shadow-icons -ml-2  bg-violet-600/95 hover:bg-violet-500 cursor-pointer text-neutral-50 rounded-full grid place-content-center text-xs`}
+            >
+              {`+${isAssignedDevsSuccess && restCount}`}
+            </span>
           </div>
           <div
             className='relative cursor-pointer'
@@ -105,9 +89,9 @@ const Card = ({ title, id, status, description }) => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 15 }}
                   style={{ x: "-50%" }}
-                  className='rounded border border-neutral-700 bg-neutral-800 p-3 absolute text-neutral-100 text-sm left-1/2 top-8 z-10 w-max'
+                  className='rounded border border-neutral-700 bg-neutral-800 px-3 py-1.5 absolute text-neutral-100 text-sm left-1/2 top-8 z-10 w-max'
                 >
-                  3 Comments
+                  {isSuccess && `${allCommentsData.length} Comments`}
                   <div className='w-full h-4 bg-transparent absolute -top-4 left-0' />{" "}
                   {/*Just for the hover effect to work properly*/}
                 </motion.div>
@@ -121,9 +105,11 @@ const Card = ({ title, id, status, description }) => {
           taskId={id}
           title={title}
           description={description}
+          status={status}
           setIsCardMenuOpen={setIsCardMenuOpen}
         />
       )}
+      {isAssignTaskMenuOpen && <AssignTask setIsMenuOpen={setIsAssignTaskMenuOpen} taskId={id} />}
     </>
   );
 };

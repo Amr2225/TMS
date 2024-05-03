@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 temp
+staggeranimation
 
 # Editor directories and files
 .vscode/*
@@ -30,3 +31,4 @@ bin
 obj
 packages
 Migrations
+Resources

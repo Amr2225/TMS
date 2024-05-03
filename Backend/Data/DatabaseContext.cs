@@ -19,21 +19,5 @@ namespace Backend.Data
 
             builder.Entity<ProjectsStatus>().HasKey(x => new { x.UserId, x.ProjectId }); // Composite primary key
         }
-
-        public ICollection<Tasks> GetAllTasks()
-        {
-            using var context = new DatabaseContext(options);
-            var allTasks = context.Tasks.Include(t => t.Project).ToList();
-
-            return allTasks;
-        }
-
-        public ICollection<AssignedTasks> GetAllAssignedTasks()
-        {
-            using var context = new DatabaseContext(options);
-            var allAssignedTasks = context.AssignedTasks.Include(x => x.Users).Include(x => x.Tasks).ThenInclude(x => x.Project).ToList();
-
-            return allAssignedTasks;
-        }
     }
 }

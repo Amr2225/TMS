@@ -2,7 +2,9 @@ using System.Text;
 using Backend.Data;
 using Backend.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +27,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers();
 builder.Services.AddScoped<IDataRepository<Users>, DataRepository<Users>>();
 builder.Services.AddScoped<IDataRepository<Projects>, DataRepository<Projects>>();
+builder.Services.AddScoped<IDataRepository<ProjectsStatus>, DataRepository<ProjectsStatus>>();
 builder.Services.AddScoped<IDataRepository<Tasks>, DataRepository<Tasks>>();
 builder.Services.AddScoped<IDataRepository<AssignedTasks>, DataRepository<AssignedTasks>>();
 builder.Services.AddScoped<IDataRepository<Comments>, DataRepository<Comments>>();
@@ -50,6 +53,13 @@ builder.Services.AddAuthentication(opt =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.Configure<FormOptions>(o =>
+{
+    o.ValueLengthLimit = int.MaxValue;
+    o.MultipartBodyLengthLimit = int.MaxValue;
+    o.MemoryBufferThreshold = int.MaxValue;
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -66,6 +76,13 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.UseAuthorization();
+
+app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions()
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Resources")),
+    RequestPath = new PathString("/Resources")
+});
 
 app.MapControllers();
 

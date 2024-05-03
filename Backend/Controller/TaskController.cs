@@ -2,13 +2,14 @@ using Backend.DTOs;
 using Backend.Models;
 using Backend.Data;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using Backend.DTOs.Sent;
-using Microsoft.AspNetCore.Components.Web;
+using backend.Helpers;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Configuration.UserSecrets;
 
 namespace Backend.Controller
 {
-    [Authorize]
+    // [Authorize]
     [Route("api/[controller]/[action]")]
     [ApiController]
     public class TaskController(IDataRepository<Tasks> taskRepo, IDataRepository<AssignedTasks> AssignedTaskRepo, IDataRepository<Users> userRepo) : ControllerBase
@@ -17,6 +18,8 @@ namespace Backend.Controller
         private readonly IDataRepository<AssignedTasks> _assignedTasksRepo = AssignedTaskRepo;
         private readonly IDataRepository<Users> _usersRepo = userRepo;
 
+
+        //CRETE
         [HttpPost]
         public async Task<IActionResult> Create(CreateTaskDto task)
         {
@@ -37,12 +40,7 @@ namespace Backend.Controller
             return Ok();
         }
 
-        [HttpGet]
-        public async Task<JsonResult> GetAllTasks(int projectId)
-        {
-            return new JsonResult(Ok(await _taskRepo.GetAllTasksAsync(projectId)));
-        }
-
+        //READ
         [HttpGet]
         public async Task<JsonResult> GetTasks(int userId, int role, int projectId)
         {
@@ -68,13 +66,13 @@ namespace Backend.Controller
             else if (role == 1) //Developer Tasks
             {
                 var userTasks = _usersRepo.GetAllDevTasksAsync(userId);
-                await foreach (var userTask in userTasks)
+                await foreach (var userTask in userTasks) //Loop over the assigned users
                 {
-                    foreach (var taskAssignedToUser in userTask?.AssignedTasks ?? [])
+                    foreach (var taskAssignedToUser in userTask?.AssignedTasks ?? []) //get the assigned tasks data corresponding to a the user
                     {
-                        foreach (var task in taskToSent)
+                        foreach (var task in taskToSent) //Check the task details
                         {
-                            if (taskAssignedToUser.TaskId == task.Id)
+                            if (taskAssignedToUser.TaskId == task.Id) //checks if the task is assigned to the user
                             {
                                 task.Editable = true; //To let the corresponding user edit the tasks that is assigned to him only
                             }
@@ -87,6 +85,7 @@ namespace Backend.Controller
             return new JsonResult(BadRequest());
         }
 
+        //UPDATE
         [HttpPut]
         public async Task<IActionResult> UpdateTask(CreateTaskDto updatedTask)
         {
@@ -110,6 +109,7 @@ namespace Backend.Controller
             return Ok();
         }
 
+        //DELETE
         [HttpDelete]
         public async Task<IActionResult> DeleteTask(int id)
         {
@@ -154,12 +154,6 @@ namespace Backend.Controller
             return Ok();
         }
 
-        [HttpGet]
-        public async Task<JsonResult> GetAllAssignedTasks()
-        {
-            return new JsonResult(Ok(await _assignedTasksRepo.GetAllAssignedTasks()));
-        }
-
         [HttpPut]
         public async Task<IActionResult> UpdateAssignedTask(AssignedTaskDto updatedTask)
         {
@@ -193,6 +187,110 @@ namespace Backend.Controller
 
             return Ok();
 
+        }
+
+
+        //Assigned Tasks with users
+        [HttpGet]
+        public async Task<JsonResult> GetAssignedDevs(int taskId)
+        {
+            var assignedUsers = await _usersRepo.GetAllAssignedDevsAsync();
+
+            List<UserDto> userToSent = [];
+
+            foreach (var user in assignedUsers)
+            {
+                if (user.AssignedTasks.Any(x => x.TaskId == taskId))
+                {
+
+                    userToSent.Add(new()
+                    {
+                        Id = user.Id,
+                        UserName = user.FirstName + " " + user.LastName
+                    });
+                }
+            }
+
+            return new JsonResult(Ok(userToSent));
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetUnassignedDevs(int taskId)
+        {
+            var unAssignedUsers = await _usersRepo.GetAllUnassignedDevs();
+            List<UserDto> userToSent = [];
+
+            foreach (var user in unAssignedUsers)
+            {
+                if (await _assignedTasksRepo.GetByIdAsync(user.Id, taskId) == null)
+                {
+
+                    if (user.AssignedProjects.Any(x => x.Status == "accepted" && x.Projects.Tasks.Any(y => y.Id == taskId)))
+                    {
+                        userToSent.Add(new()
+                        {
+                            Id = user.Id,
+                            UserName = user.FirstName + " " + user.LastName
+                        });
+                    }
+                }
+
+            }
+
+            return new JsonResult(Ok(userToSent));
+        }
+
+
+        // Attachments Specific APIs
+        [HttpPost]
+        public async Task<IActionResult> AttachFile([FromForm] AssignAttachmentDto TaskDto)
+        {
+            if (TaskDto == null)
+            {
+                return BadRequest(TaskDto);
+            }
+
+
+            var newTask = await _assignedTasksRepo.GetByIdAsync(TaskDto.UserId, TaskDto.TaskId);
+
+            if (TaskDto.File != null)
+            {
+                var result = UploadHandler.Upload(TaskDto.File, "AssignedTasks");
+                if (!string.IsNullOrEmpty(result.ErrorMessage))
+                {
+                    return BadRequest(new
+                    {
+                        message = result.ErrorMessage
+                    });
+                }
+
+                newTask.Attachments = result.FileName;
+
+
+                _assignedTasksRepo.Update(newTask);
+                await _assignedTasksRepo.Save();
+
+                return Ok(new
+                {
+                    message = "Task is created"
+                });
+
+            }
+            return BadRequest();
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetAllAttachedTasks()
+        {
+            var baseUrl = "http://localhost:5164/";
+
+            var tasks = await _assignedTasksRepo.FileGetter();
+            foreach (var task in tasks)
+            {
+                if (!task.Attachments.IsNullOrEmpty())
+                    task.Attachments = baseUrl + task.Attachments;
+            }
+            return new JsonResult(Ok(tasks));
         }
 
     }

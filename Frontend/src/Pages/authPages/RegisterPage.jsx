@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useSelector } from "react-redux";
 import { AnimatePresence } from "framer-motion";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 
-import FormInputs from "../Components/Register Inputs/FormInputs";
-import { validatePassword, validation, validatedEmail } from "../Forms Validation/Validation";
-import { Message } from "../Components";
-import apis from "../services/api";
-import { getAuthToken } from "../services/auth/auth";
+import FormInputs from "../../Components/Register Inputs/FormInputs";
+import { validatePassword, validation, validatedEmail } from "../../Forms Validation/Validation";
+import { Message } from "../../Components";
+import { useRegisterMutation } from "../../Redux/apis/authApi";
 
 const RegisterPage = () => {
   const [firstName, setFirstName] = useState("");
@@ -14,12 +14,15 @@ const RegisterPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [isTeamLeader, setIsTeamLeader] = useState(false);
   const [showMessage, setShowMessage] = useState(["", "", false]);
+  const { isAuthed } = useSelector((state) => state.user);
+  const [register] = useRegisterMutation();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (getAuthToken().token) navigate("/");
-  }, []);
+  if (isAuthed) {
+    return <Navigate to='/' />;
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,24 +43,23 @@ const RegisterPage = () => {
     }
 
     //Adding the user to the database
-    await apis.auth
-      .post("/Register", {
+    try {
+      await register({
         firstName: firstName,
         lastName: lastName,
         email: email,
         password: password,
-        roleId: 1,
-      })
-      .then(() => {
-        setShowMessage(["Account Created Successfully", "success", true]); //Show the message with success
-        setTimeout(() => {
-          navigate("/login");
-        }, 1000);
-      })
-      .catch((err) => {
-        if (err.response.status == 400) setShowMessage([err.response.data, "error", true]);
-        else console.error("Error", err);
-      });
+        roleId: isTeamLeader ? 2 : 1, // if team leader sends 2 if dev sends 1
+      }).unwrap();
+
+      setShowMessage(["Account Created Successfully", "success", true]); //Show the message with success
+      setTimeout(() => {
+        navigate("/login");
+      }, 1000);
+    } catch (err) {
+      if (err.status == 400) setShowMessage([err.data, "error", true]);
+      else console.error("Error", err);
+    }
   };
 
   return (
@@ -74,6 +76,17 @@ const RegisterPage = () => {
             title='Confirm Password'
             type='password'
           />
+          <div className='flex gap-1 items-center'>
+            <input
+              type='checkbox'
+              id='role'
+              className='w-4 h-4'
+              onChange={(e) => setIsTeamLeader(e.target.checked)}
+            />
+            <label htmlFor='role' className='select-none text-sm text-neutral-300 font-bold'>
+              Team Leader
+            </label>
+          </div>
           <button
             type='submit'
             onClick={handleSubmit}

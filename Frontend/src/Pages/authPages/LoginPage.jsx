@@ -2,26 +2,27 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 
-import FormInputs from "../Components/Register Inputs/FormInputs";
-import { validatedEmail, validationLogin } from "../Forms Validation/Validation";
-import { Message } from "../Components";
-import { getAuthToken } from "../services/auth/auth";
-import { useDispatch } from "react-redux";
-// import { setData } from "../Redux/UserReducer";
-import { useLoginMutation } from "../Redux/apis/authApi";
+import FormInputs from "../../Components/Register Inputs/FormInputs";
+import { validatedEmail, validationLogin } from "../../Forms Validation/Validation";
+import { Message } from "../../Components";
+import { useLoginMutation } from "../../Redux/apis/authApi";
 import { useSelector } from "react-redux";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showMessage, setShowMessage] = useState(["", "", false]);
-  const [login, { isError, isSuccess, isLoading }] = useLoginMutation();
-  const { userData } = useSelector((state) => state.user); // A Globale State gets set when the res of the login is 200
+  const [login] = useLoginMutation();
+  const { isAuthed } = useSelector((state) => state.user); // A Globale State gets set when the res of the login is 200
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (getAuthToken().token) navigate("/");
-  }, []);
+    if (isAuthed) {
+      setTimeout(() => {
+        navigate("/");
+      }, 300);
+    }
+  }, [isAuthed, navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -45,23 +46,8 @@ const LoginPage = () => {
     }
   };
 
-  const handleNavigation = () => {
-    if (userData.role === "1") {
-      setTimeout(() => {
-        navigate("/"); //to be changened later
-      }, 500);
-    } else if (userData.role === "2") {
-      setTimeout(() => {
-        navigate("/"); // to changened later
-      }, 500);
-    }
-  };
-
   return (
     <main className='grid place-content-center h-screen overflow-hidden'>
-      {/* {console.log(isError)} */}
-      {isSuccess && handleNavigation()}
-      {/* {console.log(isLoading)} */}
       <div className='w-96  bg-neutral-800 border border-neutral-700 rounded-md p-4 shadow-xl shadow-neutral-950'>
         <h1 className='text-neutral-100 text-center pt-2 text-3xl font-bold'>Login</h1>
         <form action='#' className='flex flex-col gap-2 mt-5'>

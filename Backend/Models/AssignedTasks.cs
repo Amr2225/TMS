@@ -19,6 +19,8 @@ namespace Backend.Models
         // Cannot make it of type List..
 
         // Rest of the attributes
+        [FileExtensions(Extensions = "jpg,jpeg,png")]
+        [DataType(DataType.ImageUrl)]
         public string? Attachments { get; set; }
     }
 }

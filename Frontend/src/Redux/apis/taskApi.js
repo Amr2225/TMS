@@ -1,66 +1,145 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { getAuthToken } from "../../services/auth/auth";
-import { setTasksData, setAssignedDevelopers } from "../reducers/taskReducer";
+import { setTasksData } from "../reducers/taskReducer";
 
 const taskApi = createApi({
   reducerPath: "taskApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:5164/api/Task/" }),
-  tagTypes: ["tasks"],
+  baseQuery: fetchBaseQuery({
+    baseUrl: "http://localhost:5164/api/Task/",
+    prepareHeaders: (headers, { getState }) => {
+      const token = getState().user.token;
+      if (token) {
+        headers.set("Authorization", "Bearer " + token);
+      }
+      return headers;
+    },
+  }),
+  tagTypes: ["tasks", "assignedDevs"],
   endpoints: (builder) => ({
+    //Dev API
+    //READ
     getTasks: builder.query({
       query: ({ id, role, projectId }) => ({
         url: `GetTasks?userId=${id}&role=${role}&projectId=${projectId}`,
         method: "GET",
-        headers: { Authorization: "Bearer " + getAuthToken().token },
       }),
       onQueryStarted: async (arg, { queryFulfilled, dispatch }) => {
         try {
           const {
             data: { value },
           } = await queryFulfilled;
-          console.log("feteched....");
           dispatch(setTasksData(value));
         } catch (e) {
-          console.log(e);
+          console.error(e);
         }
       },
       providesTags: ["tasks"],
     }),
 
+    //Team Leader APIs
+    //CREATE
     createTask: builder.mutation({
       query: (newTaskData) => ({
         url: "Create",
         method: "POST",
         body: newTaskData,
-        headers: { Authorization: "Bearer " + getAuthToken().token },
       }),
       invalidatesTags: ["tasks"],
     }),
 
+    //UPDATE
     updateTask: builder.mutation({
       query: (updatedTask) => ({
         url: "UpdateTask",
         method: "PUT",
-        headers: { Authorization: "Bearer " + getAuthToken().token },
         body: updatedTask,
       }),
       invalidatesTags: ["tasks"],
     }),
 
+    //DELETE
     deleteTask: builder.mutation({
       query: (id) => ({
         url: `DeleteTask?id=${id}`,
         method: "DELETE",
-        headers: { Authorization: "Bearer " + getAuthToken().token },
       }),
       invalidatesTags: ["tasks"],
+    }),
+
+    //ASSIGN TASKS
+    assignTasks: builder.mutation({
+      query: (newAssignedTask) => ({
+        url: "AssignTask",
+        method: "POST",
+        body: newAssignedTask,
+      }),
+      invalidatesTags: ["assignedDevs"],
+    }),
+
+    //DEV AND TEAM LEADER API
+    //GET ASSIGNED DEVS
+    getAssignedDevs: builder.query({
+      query: (taskId) => ({
+        url: `GetAssignedDevs?taskId=${taskId}`,
+        method: "GET",
+      }),
+
+      transformResponse: (res) => {
+        return res.value;
+      },
+      providesTags: ["assignedDevs"],
+    }),
+
+    //GET UNASSIGNED DEVS
+    getUnassignedDevs: builder.query({
+      query: (taskId) => ({
+        url: `GetUnassignedDevs?taskId=${taskId}`,
+        method: "GET",
+      }),
+
+      transformResponse: (res) => {
+        return res.value;
+      },
+
+      providesTags: ["assignedDevs"],
+    }),
+
+    //ATTACHMENT API
+    //GET ATTACHMENT
+    getAttachments: builder.query({
+      query: () => ({
+        url: "GetAllAttachedTasks",
+        method: "GET",
+      }),
+
+      transformResponse: (res) => {
+        return res.value.map((user) => ({
+          userName: user.users.firstName + " " + user.users.lastName,
+          task: user.tasks.title,
+          attachment: user.attachments,
+        }));
+      },
+    }),
+
+    //ASSIGN ATTACHMENT
+    assignAttachment: builder.mutation({
+      query: (data) => ({
+        url: "AttachFile",
+        method: "POST",
+        body: data,
+        headers: { "Custome-Header": "value" },
+      }),
     }),
   }),
 });
 export const {
   useGetTasksQuery,
+  useGetAssignedDevsQuery,
+  useGetUnassignedDevsQuery,
+  useGetAttachmentsQuery,
   useCreateTaskMutation,
   useUpdateTaskMutation,
   useDeleteTaskMutation,
+  useAssignTasksMutation,
+  useAssignAttachmentMutation,
 } = taskApi;
 export default taskApi;

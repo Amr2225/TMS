@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useAnimationControls } from "framer-motion";
+import { Link } from "react-router-dom";
+
 import { BsFillBarChartLineFill } from "react-icons/bs";
 import { GrDocument } from "react-icons/gr";
-import { Link } from "react-router-dom";
-import { FiAlertCircle, FiLogOut, FiUsers } from "react-icons/fi";
-import { TbReportSearch } from "react-icons/tb";
+import { FiAlertCircle, FiLogOut } from "react-icons/fi";
 import { FaProjectDiagram } from "react-icons/fa";
-import { removeAuthToken } from "../services/auth/auth";
+import { ImAttachment } from "react-icons/im";
 
 import NavLinks from "./Sidebar/NavLinks";
 import Projects from "./Sidebar/Projects";
@@ -17,8 +17,9 @@ import {
   projectsContainerVariants,
 } from "./Sidebar/SidebarAnimationVariants";
 
-import { useGetProjectsQuery } from "../Redux/apis/projectsApi";
+import { useGetAcceptedProjectsQuery, useGetProjectsQuery } from "../Redux/apis/projectsApi";
 import { useSelector } from "react-redux";
+import { persistor } from "../Redux/store";
 
 const Sidebar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -27,7 +28,14 @@ const Sidebar = () => {
 
   const { projectsData } = useSelector((state) => state.projects);
   const { userData } = useSelector((state) => state.user);
-  useGetProjectsQuery();
+
+  if (userData.role === "1") {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useGetAcceptedProjectsQuery(userData.id);
+  } else if (userData.role === "2") {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useGetProjectsQuery();
+  }
 
   // Animation Controls for the sidebar
   const arrowControls = useAnimationControls();
@@ -71,7 +79,8 @@ const Sidebar = () => {
   };
 
   const handleLogout = () => {
-    removeAuthToken();
+    persistor.purge();
+    persistor.dispatch();
   };
 
   return (
@@ -162,25 +171,38 @@ const Sidebar = () => {
           </div>
           <div className='flex flex-col gap-3 pl-11 mt-2 w-full '>
             {projectsData.map((project) => (
-              <Projects key={project.id} {...project} />
+              <Projects
+                key={project.projectId}
+                {...project}
+                link={
+                  userData.role === "2"
+                    ? `/teamleader/dashboard/${project.projectId}`
+                    : `/dev/dashboard/${project.projectId}`
+                }
+              />
             ))}
           </div>
         </motion.div>
-        <NavLinks name='Projects List'>
-          <BsFillBarChartLineFill className='min-w-8 w-8 scale-125' />
-        </NavLinks>
-        <NavLinks name='Rejected Projects'>
-          <GrDocument className='min-w-8 w-8 scale-125' />
-        </NavLinks>
-        <NavLinks name='Add Projects'>
-          <FiAlertCircle className='min-w-8 w-8 scale-125' />
-        </NavLinks>
-        <NavLinks name='Reporting'>
-          <TbReportSearch className='min-w-8 w-8 scale-125' />
-        </NavLinks>
-        <NavLinks name='Users'>
-          <FiUsers className='min-w-8 w-8 scale-125' />
-        </NavLinks>
+        {userData.role == "1" && (
+          <>
+            <NavLinks link={"/dev/projectlist"} name='Projects List'>
+              <BsFillBarChartLineFill className='min-w-8 w-8 scale-125' />
+            </NavLinks>
+            <NavLinks link={"/dev/rejectedlist"} name='Rejected Projects'>
+              <FiAlertCircle className='min-w-8 w-8 scale-125' />
+            </NavLinks>
+          </>
+        )}
+        {userData.role === "2" && (
+          <>
+            <NavLinks link={"/teamleader/addprojects"} name='Add Projects'>
+              <GrDocument className='min-w-8 w-8 scale-125' />
+            </NavLinks>
+            <NavLinks link={"/teamleader/view-attachments"} name='View Attachments'>
+              <ImAttachment className='min-w-8 w-8 scale-125' />
+            </NavLinks>
+          </>
+        )}
       </div>
     </motion.nav>
   );

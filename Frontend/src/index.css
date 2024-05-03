@@ -22,5 +22,12 @@ input ~ .input-text{
 
 .scroll-bar-hidden::-webkit-scrollbar{
   width: 10px;
- 
+}
+
+.project-rejected{
+  @apply bg-red-950 border-red-500
+}
+
+.project-accepted{
+  @apply bg-green-950 border-green-500
 }
