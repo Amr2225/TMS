@@ -57,6 +57,8 @@ const Card = ({ title, id, status, description, editable }) => {
             {isAssignedDevsSuccess &&
               firstFive.map((developer) => (
                 <span
+                  id='assigned-dev'
+                  data-taskid={id}
                   key={developer.id}
                   title={developer.userName}
                   className={`w-5 h-5 shadow-icons -ml-2 bg-neutral-50 text-neutral-950 rounded-full grid place-content-center text-xs hover:z-50 hover:scale-105 transition duration-200`}

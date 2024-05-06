@@ -40,37 +40,5 @@ namespace Backend.Controller
             return await _commentRepo.GetAllCommentsAsync(taskId);
         }
 
-        //UPDATE
-        [HttpPost]
-        public async Task<IActionResult> UpdateComment(UpdateCommentDto updatedComment)
-        {
-            if (updatedComment == null)
-                return BadRequest();
-
-            var commentToUpdate = await _commentRepo.GetByIdAsync(updatedComment.Id);
-            if (commentToUpdate == null)
-                return NotFound();
-
-            commentToUpdate.Comment = updatedComment.Comment;
-
-            _commentRepo.Update(commentToUpdate);
-            await _commentRepo.Save();
-
-            return Ok();
-        }
-
-        //DELETE
-        [HttpDelete]
-        public async Task<IActionResult> DeleteComment(int id)
-        {
-            var CommentToDelete = await _commentRepo.GetByIdAsync(id);
-            if (CommentToDelete == null)
-                return NotFound();
-
-            _commentRepo.Delete(CommentToDelete);
-            await _commentRepo.Save();
-
-            return Ok();
-        }
     }
 }

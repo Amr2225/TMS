@@ -154,26 +154,6 @@ namespace Backend.Controller
             return Ok();
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateAssignedTask(AssignedTaskDto updatedTask)
-        {
-            if (updatedTask == null)
-                return BadRequest();
-
-            var taskToUpdate = await _assignedTasksRepo.GetByIdAsync(updatedTask.UserId, updatedTask.TaskId);
-
-            if (taskToUpdate == null)
-                return NotFound();
-
-            // Update the properties of the AssignedTask
-            taskToUpdate.Attachments = updatedTask.Attachments;
-
-            _assignedTasksRepo.Update(taskToUpdate);
-            await _assignedTasksRepo.Save();
-
-            return Ok();
-        }
-
         [HttpDelete]
         public async Task<IActionResult> DeleteAssignedTask(int userId, int taskId)
         {

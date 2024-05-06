@@ -14,11 +14,18 @@ const Column = ({ title, headingColor, column, setIsCardMenuActive }) => {
   const [isAddAttahcmentActive, setIsAddAttahcmentActive] = useState(false);
 
   const [updateTask] = useUpdateTaskMutation();
-  const { taskData } = useSelector((state) => state.tasks);
+  const { taskData, searchValue } = useSelector((state) => state.tasks);
   const { userData } = useSelector((state) => state.user);
   const params = useParams();
 
-  const filteredCards = taskData.filter((data) => data.status === column);
+  const matchAny = (id, searchList) => {
+    console.log(searchList.length);
+    return searchList.some((val) => id === val.toString() || searchList[0] === "");
+  };
+
+  const filteredCards = taskData.filter(
+    (data) => data.status === column && matchAny(data.id.toString(), searchValue)
+  );
 
   const handleDragOver = (e) => {
     e.preventDefault();

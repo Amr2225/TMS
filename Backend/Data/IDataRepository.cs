@@ -29,7 +29,6 @@ namespace Backend.Data
 
 
         //Comment Specific Data Repository Methods
-        Task<IEnumerable<T>> GetAllCommentsAsync();
         Task<IEnumerable<Comments>> GetAllCommentsAsync(int taskId);
 
 

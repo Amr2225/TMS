@@ -105,11 +105,6 @@ namespace Backend.Data
 
 
         //Comments Specifies Data Repositories Methods
-        public async Task<IEnumerable<T>> GetAllCommentsAsync()
-        {
-            return await table.Include("Users").Include("Tasks").ToListAsync();
-        }
-
         public async Task<IEnumerable<Comments>> GetAllCommentsAsync(int taskId)
         {
             return await _dbContext.Comments.Include(x => x.Users).Where(x => x.TaskId == taskId).ToListAsync();
