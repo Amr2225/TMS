@@ -75,7 +75,7 @@ async function deleteTask(req, res) {
   const id = req.query.id;
 
   try {
-    await Task.findByIdAndDelete(id);
+    await Task.findOneAndDelete({ _id: id });
     return res.sendStatus(204);
   } catch (error) {
     console.log("Error happend while deleting task", error);
@@ -203,7 +203,7 @@ async function AttachFile(req, res) {
     const assginedTask = await AssignedTask.findOne({ userId: UserId, taskId: TaskId });
     if (!file) return res.status(400).json({ msg: "No file was sent" });
 
-    assginedTask.attachments = `${host}/uploads/${file.originalname}`;
+    assginedTask.attachments = `https://${host}/uploads/${file.originalname}`;
     await assginedTask.save();
 
     return res.status(200).json();

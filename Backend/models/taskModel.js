@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { AssignedTask } from "./assignedTaskModel.js";
 
 const taskSchema = mongoose.Schema({
   title: {
@@ -18,6 +19,18 @@ const taskSchema = mongoose.Schema({
     ref: "Project",
     required: true,
   },
+});
+
+taskSchema.pre("findOneAndDelete", async function (next) {
+  const task = this;
+  const taskId = task._conditions._id;
+
+  try {
+    await AssignedTask.deleteMany({ taskId });
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 
 export const Task = mongoose.model("Task", taskSchema);
