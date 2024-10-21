@@ -18,8 +18,6 @@ const AssignDevelopers = () => {
     });
   const params = useParams();
 
-  console.log(projectsData);
-
   const project = projectsData.find((project) => project.projectId === params.projectId);
 
   //   const devs = [

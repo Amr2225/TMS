@@ -29,9 +29,9 @@ const AddProjects = () => {
       </h1>
       <div className='grid justify-items-center bg-neutral-800 w-[50%]  mx-auto p-10 border-neutral-700 border shadow-lg rounded-md'>
         <div>
-          {projectsData.map((project) => {
+          {projectsData.map((project, index) => {
             return (
-              <li className='text-neutral-50 text-2xl mb-3' key={project.id}>
+              <li className='text-neutral-50 text-2xl mb-3' key={index}>
                 {project.title}
               </li>
             );

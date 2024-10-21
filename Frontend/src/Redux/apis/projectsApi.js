@@ -110,7 +110,6 @@ const projectsApi = createApi({
       onQueryStarted: async (arg, { queryFulfilled, dispatch }) => {
         try {
           const { data } = await queryFulfilled;
-          console.log(data);
           dispatch(
             setProjectData(
               data.map((project) => ({ projectId: project._id, title: project.title }))

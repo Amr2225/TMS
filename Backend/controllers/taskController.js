@@ -127,7 +127,6 @@ async function getAssignedDevs(req, res) {
         });
       })
     );
-    console.log("res", response);
 
     return res.status(200).json(response);
   } catch (error) {
@@ -174,25 +173,21 @@ async function getAllAttachments(req, res) {
   // attachments
   try {
     const response = [];
-    const attachments = await AssignedTask.find().$where(function () {
-      return this.attachments !== "";
-    });
-
+    const attachments = await AssignedTask.find({ attahcments: { $ne: "" } });
     await Promise.all(
       attachments.map(async (attachment) => {
         const task = await Task.findById(attachment.taskId);
         const user = await User.findById(attachment.userId);
 
         response.push({
-          firstName: user.firstName,
-          lastName: user.lastName,
+          userName: `${user.firstName} ${user.lastName}`,
           task: task.title,
           attachment: attachment.attachments,
         });
       })
     );
 
-    return res.status(200).json({ value: response });
+    return res.status(200).json(response);
   } catch (error) {
     console.log("Error happend while getting the attachments", error);
     return res.status(500).json({ msg: "Error happend while getting the attachements" });
@@ -211,7 +206,7 @@ async function AttachFile(req, res) {
     assginedTask.attachments = `${host}/uploads/${file.originalname}`;
     await assginedTask.save();
 
-    return res.sendStatus(200);
+    return res.status(200).json();
   } catch (error) {
     console.log("Error happend while uploading file", error);
     return res.status(500).json({ msg: "Error happend while uploading file" });

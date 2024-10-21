@@ -24,10 +24,8 @@ const taskApi = createApi({
         method: "GET",
       }),
       onQueryStarted: async (arg, { queryFulfilled, dispatch }) => {
-        console.log("arg ", arg);
         try {
           const { data } = await queryFulfilled;
-          console.log(data);
           const task = data.map((task) => ({
             id: task._id,
             title: task.title,
@@ -112,15 +110,6 @@ const taskApi = createApi({
         url: "GetAllAttachedTasks",
         method: "GET",
       }),
-
-      transformResponse: (res) => {
-        console.log(res);
-        return res.value.map((user) => ({
-          userName: user.users.firstName + " " + user.users.lastName,
-          task: user.tasks.title,
-          attachment: user.attachments,
-        }));
-      },
     }),
 
     //ASSIGN ATTACHMENT
@@ -129,7 +118,6 @@ const taskApi = createApi({
         url: "AttachFile",
         method: "POST",
         body: data,
-        headers: { "Custome-Header": "value" },
       }),
     }),
   }),
