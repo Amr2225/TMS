@@ -16,7 +16,7 @@ const DeleteArea = () => {
   };
 
   const hanldeOnDrop = (e) => {
-    const cardIdToRemove = +e.dataTransfer.getData("cardId"); // unary plus operator to convert string to number
+    const cardIdToRemove = e.dataTransfer.getData("cardId"); // unary plus operator to convert string to number
     deleteTask(cardIdToRemove);
     setActive(false);
   };

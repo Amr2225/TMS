@@ -18,9 +18,7 @@ const AddProjects = () => {
       setShowMessage(["project created successfully", "success", true]);
       form.current.title.value = "";
     } catch (err) {
-      if (!projectsData.some((prj) => prj.title === e.target.value))
-        setShowMessage(["this project already exists.", "error", true]);
-      else setShowMessage([err.data, "error", true]);
+      setShowMessage([err.data, "error", true]);
     }
   };
 

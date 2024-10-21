@@ -1,11 +1,10 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { setAuthToken } from "../reducers/UserReducer";
-// import { setData } from "../reducers/UserReducer";
-// import { setAuth } from "../reducers/authReducer";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const authApi = createApi({
   reducerPath: "authApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:5164/api/Auth/" }),
+  baseQuery: fetchBaseQuery({ baseUrl: `${API_URL}/api/Auth/` }),
   endpoints: (builder) => ({
     register: builder.mutation({
       query: (userData) => ({
@@ -18,13 +17,12 @@ const authApi = createApi({
       query: (userData) => ({
         url: "Login",
         method: "POST",
-        responseHandler: (res) => res.text(),
         body: userData,
       }),
       onQueryStarted: async (arg, { queryFulfilled, dispatch }) => {
         try {
           const { data } = await queryFulfilled;
-          dispatch(setAuthToken(data));
+          dispatch(setAuthToken(data.token));
         } catch (err) {
           console.error("Error ", err);
         }

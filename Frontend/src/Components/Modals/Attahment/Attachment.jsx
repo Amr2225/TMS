@@ -30,8 +30,8 @@ const Attachment = ({ setIsMenuOpen, taskId }) => {
     }
 
     const fileData = new FormData();
-    fileData.append("UserId", +userData.id);
-    fileData.append("TaskId", +taskId);
+    fileData.append("UserId", userData.id);
+    fileData.append("TaskId", taskId);
     fileData.append("File", file);
 
     try {

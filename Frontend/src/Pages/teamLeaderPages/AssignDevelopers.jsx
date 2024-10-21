@@ -20,7 +20,7 @@ const AssignDevelopers = () => {
 
   console.log(projectsData);
 
-  const project = projectsData.find((project) => project.projectId === +params.projectId);
+  const project = projectsData.find((project) => project.projectId === params.projectId);
 
   //   const devs = [
   //     {
@@ -71,7 +71,7 @@ const AssignDevelopers = () => {
   const makeChecked = (userId) => {
     if (isProjectDataSuccess) {
       const value = assignedProjectsData
-        .filter((project) => project.projectId == +params.projectId)
+        .filter((project) => project.projectId == params.projectId)
         .findIndex((project) => project.userId === userId);
 
       if (value === -1) return false;
@@ -83,7 +83,7 @@ const AssignDevelopers = () => {
     if (isProjectDataSuccess) {
       const value = assignedProjectsData
         .filter(
-          (project) => project.projectId === +params.projectId && project.status === "rejected"
+          (project) => project.projectId === params.projectId && project.status === "rejected"
         )
         .findIndex((x) => x.userId === userId);
 
@@ -95,7 +95,7 @@ const AssignDevelopers = () => {
     if (isProjectDataSuccess) {
       const value = assignedProjectsData
         .filter(
-          (project) => project.projectId === +params.projectId && project.status === "accepted"
+          (project) => project.projectId === params.projectId && project.status === "accepted"
         )
         .findIndex((x) => x.userId === userId);
 

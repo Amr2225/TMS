@@ -15,13 +15,12 @@ const AssignTask = ({ setIsMenuOpen, taskId }) => {
   const params = useParams();
   const containerRef = useRef(null);
 
-  const { data: assignedDevs, isSuccess: isAssignedDevsSuccess } = useGetAssignedDevsQuery(+taskId);
-  const { data: unassignedDevs, isSuccess: isUnassignedDevsSuccess } = useGetUnassignedDevsQuery(
-    +taskId
-  );
+  const { data: assignedDevs, isSuccess: isAssignedDevsSuccess } = useGetAssignedDevsQuery(taskId);
+  const { data: unassignedDevs, isSuccess: isUnassignedDevsSuccess } =
+    useGetUnassignedDevsQuery(taskId);
   const [assignTask] = useAssignTasksMutation();
 
-  const project = projectsData.find((project) => project.projectId === +params.projectId);
+  const project = projectsData.find((project) => project.projectId === params.projectId);
 
   const handleMenuClose = (e) => {
     if (containerRef.current && !containerRef.current.contains(e.target)) {
@@ -58,7 +57,7 @@ const AssignTask = ({ setIsMenuOpen, taskId }) => {
               </li>
             ))}
         </ol>
-        {userData.role === "2" && (
+        {userData.role === 2 && (
           <>
             <h3 className='mb-4 text-lg font-bold text-red-600'>Assign Developers</h3>
             <ol className='ml-5 flex gap-3 flex-col'>

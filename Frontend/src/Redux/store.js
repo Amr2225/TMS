@@ -8,7 +8,7 @@ import projectsApi from "./apis/projectsApi";
 import userApi from "./apis/userApi";
 import commnetsApi from "./apis/commentsApi";
 
-import { tokenExpirationMiddleware } from "./middleware/tokenExpirationMiddleware";
+// import { tokenExpirationMiddleware } from "./middleware/tokenExpirationMiddleware";
 
 export const store = configureStore({
   reducer: persistedReducer,
@@ -19,8 +19,8 @@ export const store = configureStore({
       .concat(taskApi.middleware)
       .concat(projectsApi.middleware)
       .concat(userApi.middleware)
-      .concat(commnetsApi.middleware) // Configure middleware for caching
-      .concat(tokenExpirationMiddleware),
+      .concat(commnetsApi.middleware),
+  // .concat(tokenExpirationMiddleware),
 });
 
 export const persistor = persistStore(store);

@@ -1,9 +1,10 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const userApi = createApi({
   reducerPath: "userApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5164/api/User/",
+    baseUrl: `${API_URL}/api/User/`,
     prepareHeaders: (headers, { getState }) => {
       const token = getState().user.token;
       if (token) {
@@ -18,13 +19,6 @@ const userApi = createApi({
         url: "GetAll",
         method: "GET",
       }),
-
-      transformResponse: (res) => {
-        return res.value.map((user) => ({
-          id: user.id,
-          name: user.firstName + " " + user.lastName,
-        }));
-      },
     }),
   }),
 });

@@ -21,7 +21,7 @@ const CardMenu = ({ title, taskId, status, description, setIsCardMenuOpen }) => 
 
   const [updateTask] = useUpdateTaskMutation();
   const [addComment] = useAddCommentMutation();
-  const { data: allCommentsData, isSuccess } = useGetCommnetsQuery(+taskId);
+  const { data: allCommentsData, isSuccess } = useGetCommnetsQuery(taskId);
 
   const { userData } = useSelector((state) => state.user);
   const containerRef = useRef(null);
@@ -94,7 +94,7 @@ const CardMenu = ({ title, taskId, status, description, setIsCardMenuOpen }) => 
             <span className='border-b mb-8 pb-1 flex items-center gap-4'>
               <h1 className=' text-2xl '>{title}</h1>
               {/* Just the team leader can edit the title */}
-              {userData.role === "2" && (
+              {userData.role === 2 && (
                 <BiPencil
                   className=' hover:text-neutral-400 cursor-pointer'
                   onClick={() => setIsEditingTitle(true)}
@@ -132,7 +132,7 @@ const CardMenu = ({ title, taskId, status, description, setIsCardMenuOpen }) => 
           <div className='mb-16'>
             <h4 className=' rounded-md w-full'>{description}</h4>
             {/* Just the team leader can edit the description */}
-            {userData.role === "2" && (
+            {userData.role === 2 && (
               <BiPencil
                 className=' hover:text-neutral-400 cursor-pointer'
                 onClick={() => setIsEditingDescription(true)}
@@ -182,7 +182,7 @@ const CardMenu = ({ title, taskId, status, description, setIsCardMenuOpen }) => 
             >
               Add Comment
             </button>
-            {userData.role === "1" && (
+            {userData.role === 1 && (
               <button
                 disabled={status !== "done"}
                 onClick={handleAttachmentMenuOpen}

@@ -16,13 +16,13 @@ const Projects = ({ projectId, title, link }) => {
   const params = useParams();
 
   const handleDelete = (e) => {
-      e.preventDefault();
+    e.preventDefault();
 
-      if(+params.projectId === projectId){
-        navigate("/teamleader");
-      }
-      deleteProject(projectId)
-  }
+    if (String(params.projectId) === String(projectId)) {
+      navigate("/teamleader");
+    }
+    deleteProject(String(projectId));
+  };
 
   return (
     <div className='flex justify-between items-center '>
@@ -43,7 +43,7 @@ const Projects = ({ projectId, title, link }) => {
         onMouseLeave={() => setIsContextMenuOpen(false)}
       >
         {/* This menu just appear for the team leader */}
-        {userData.role === "2" && (
+        {userData.role === 2 && (
           <>
             <BsThreeDots className='text-neutral-100 hover:bg-neutral-600/40 ' />
             <AnimatePresence>
@@ -60,15 +60,12 @@ const Projects = ({ projectId, title, link }) => {
 
                   <button
                     className='hover:underline'
-                    onClick={() => navigate(`/teamleader/AssignDevs/${projectId}`)}
+                    onClick={() => navigate(`/teamleader/AssignDevs/${String(projectId)}`)}
                   >
                     Assign
                   </button>
 
-                  <button
-                    onClick={handleDelete}
-                    className='text-red-400 hover:underline'
-                  >
+                  <button onClick={handleDelete} className='text-red-400 hover:underline'>
                     Delete
                   </button>
                 </motion.div>
@@ -78,7 +75,11 @@ const Projects = ({ projectId, title, link }) => {
         )}
       </div>
       {isUpdateMenuOpen && (
-        <UpdateProject id={projectId} projectTitle={title} setIsMenuOpen={setIsUpdateMenuOpen} />
+        <UpdateProject
+          id={String(projectId)}
+          projectTitle={title}
+          setIsMenuOpen={setIsUpdateMenuOpen}
+        />
       )}
     </div>
   );

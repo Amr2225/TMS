@@ -28,8 +28,8 @@ const DevProjectList = () => {
                   <button
                     onClick={() =>
                       UpdateProjectStatus({
-                        userId: +userData.id,
-                        projectId: +project.projectId,
+                        userId: userData.id,
+                        projectId: project.projectId,
                         status: "accepted",
                       })
                     }
@@ -40,8 +40,8 @@ const DevProjectList = () => {
                   <button
                     onClick={() =>
                       UpdateProjectStatus({
-                        userId: +userData.id,
-                        projectId: +project.projectId,
+                        userId: userData.id,
+                        projectId: project.projectId,
                         status: "rejected",
                       })
                     }

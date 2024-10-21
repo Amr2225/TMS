@@ -3,7 +3,7 @@ import { useGetRejectedProjectsQuery } from "../../Redux/apis/projectsApi";
 
 const RejectProjects = () => {
   const { userData } = useSelector((state) => state.user);
-  const { data, isSuccess } = useGetRejectedProjectsQuery(+userData.id);
+  const { data, isSuccess } = useGetRejectedProjectsQuery(userData.id);
 
   return (
     <div>

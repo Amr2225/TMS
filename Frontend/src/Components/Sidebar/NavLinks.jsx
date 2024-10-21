@@ -11,7 +11,7 @@ const NavLinks = ({ children, name, link }) => {
       }
     >
       {children}
-      <p className='overflow-clip whitespace-nowrap tracking-wide'>{name}</p>
+      <p className='overflow-hidden whitespace-nowrap tracking-wide'>{name}</p>
     </NavLink>
   );
 };

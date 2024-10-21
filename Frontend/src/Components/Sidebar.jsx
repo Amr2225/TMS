@@ -29,10 +29,10 @@ const Sidebar = () => {
   const { projectsData } = useSelector((state) => state.projects);
   const { userData } = useSelector((state) => state.user);
 
-  if (userData.role === "1") {
+  if (userData.role === 1) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useGetAcceptedProjectsQuery(userData.id);
-  } else if (userData.role === "2") {
+  } else if (userData.role === 2) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useGetProjectsQuery();
   }
@@ -175,7 +175,7 @@ const Sidebar = () => {
                 key={project.projectId}
                 {...project}
                 link={
-                  userData.role === "2"
+                  userData.role === 2
                     ? `/teamleader/dashboard/${project.projectId}`
                     : `/dev/dashboard/${project.projectId}`
                 }
@@ -183,7 +183,7 @@ const Sidebar = () => {
             ))}
           </div>
         </motion.div>
-        {userData.role == "1" && (
+        {userData.role == 1 && (
           <>
             <NavLinks link={"/dev/projectlist"} name='Projects List'>
               <BsFillBarChartLineFill className='min-w-8 w-8 scale-125' />
@@ -193,7 +193,7 @@ const Sidebar = () => {
             </NavLinks>
           </>
         )}
-        {userData.role === "2" && (
+        {userData.role === 2 && (
           <>
             <NavLinks link={"/teamleader/addprojects"} name='Add Projects'>
               <GrDocument className='min-w-8 w-8 scale-125' />

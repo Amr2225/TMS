@@ -26,9 +26,4 @@ staggeranimation
 *.sw?
 
 # .Net directories
-_ReSharper.*
-bin
-obj
-packages
-Migrations
-Resources
+*.env

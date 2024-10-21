@@ -8,14 +8,14 @@ const AuthGuard = () => {
     return <Navigate to='/Login' />;
   }
 
-  if (userData.role === "1") {
+  if (userData.role === 1) {
     return (
       <>
         <Navigate to='/dev' />
         <Outlet />
       </>
     );
-  } else if (userData.role === "2") {
+  } else if (userData.role === 2) {
     return (
       <>
         <Navigate to='/teamleader' />

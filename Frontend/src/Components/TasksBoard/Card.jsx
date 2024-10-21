@@ -11,8 +11,8 @@ const Card = ({ title, id, status, description, editable }) => {
   const [isCardMenuOpen, setIsCardMenuOpen] = useState(false);
   const [isAssignTaskMenuOpen, setIsAssignTaskMenuOpen] = useState(false);
 
-  const { data: allCommentsData, isSuccess } = useGetCommnetsQuery(+id);
-  const { data: assignedDevs, isSuccess: isAssignedDevsSuccess } = useGetAssignedDevsQuery(+id);
+  const { data: allCommentsData, isSuccess } = useGetCommnetsQuery(id);
+  const { data: assignedDevs, isSuccess: isAssignedDevsSuccess } = useGetAssignedDevsQuery(id);
 
   const AssignedMenuRef = useRef(null);
 

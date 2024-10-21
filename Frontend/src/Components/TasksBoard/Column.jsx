@@ -14,18 +14,11 @@ const Column = ({ title, headingColor, column, setIsCardMenuActive }) => {
   const [isAddAttahcmentActive, setIsAddAttahcmentActive] = useState(false);
 
   const [updateTask] = useUpdateTaskMutation();
-  const { taskData, searchValue } = useSelector((state) => state.tasks);
+  const { taskData } = useSelector((state) => state.tasks);
   const { userData } = useSelector((state) => state.user);
   const params = useParams();
 
-  const matchAny = (id, searchList) => {
-    console.log(searchList.length);
-    return searchList.some((val) => id === val.toString() || searchList[0] === "");
-  };
-
-  const filteredCards = taskData.filter(
-    (data) => data.status === column && matchAny(data.id.toString(), searchValue)
-  );
+  const filteredCards = taskData.filter((data) => data.status === column);
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -45,17 +38,18 @@ const Column = ({ title, headingColor, column, setIsCardMenuActive }) => {
     //Not placing the card in the same position
     if (column !== status) {
       let cardsCopy = [...taskData];
-      let cardToTransfer = cardsCopy.find((card) => card.id === +cardId);
+      let cardToTransfer = cardsCopy.find((card) => card.id === cardId);
 
       cardToTransfer = { ...cardToTransfer, status: column }; //change the column of the card
 
       if (column === "done") {
-        if (userData.role === "1") {
+        if (userData.role === 1) {
           setTaskId(cardId);
           setIsAddAttahcmentActive(true);
         }
       }
 
+      console.log("Update ", { ...cardToTransfer, projectId: params.projectId });
       updateTask({ ...cardToTransfer, projectId: params.projectId }); //Project id will be passed as a prop
     }
   };
@@ -79,7 +73,7 @@ const Column = ({ title, headingColor, column, setIsCardMenuActive }) => {
             <Card key={cardData.id} setIsCardMenuActive={setIsCardMenuActive} {...cardData} />
           ))}
           <DropIndicator active={active} />
-          {userData.role === "2" && column === "backlog" ? <AddCard /> : <></>}
+          {userData.role === 2 && column === "backlog" ? <AddCard /> : <></>}
         </div>
       </div>
       {isAddAttahcmentActive && (

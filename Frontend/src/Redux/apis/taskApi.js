@@ -1,10 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { setTasksData } from "../reducers/taskReducer";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const taskApi = createApi({
   reducerPath: "taskApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5164/api/Task/",
+    baseUrl: `${API_URL}/api/Task/`,
     prepareHeaders: (headers, { getState }) => {
       const token = getState().user.token;
       if (token) {
@@ -23,11 +24,19 @@ const taskApi = createApi({
         method: "GET",
       }),
       onQueryStarted: async (arg, { queryFulfilled, dispatch }) => {
+        console.log("arg ", arg);
         try {
-          const {
-            data: { value },
-          } = await queryFulfilled;
-          dispatch(setTasksData(value));
+          const { data } = await queryFulfilled;
+          console.log(data);
+          const task = data.map((task) => ({
+            id: task._id,
+            title: task.title,
+            description: task.description,
+            projectId: task.projectId,
+            status: task.status,
+            editable: task.Editable,
+          }));
+          dispatch(setTasksData(task));
         } catch (e) {
           console.error(e);
         }
@@ -83,9 +92,6 @@ const taskApi = createApi({
         method: "GET",
       }),
 
-      transformResponse: (res) => {
-        return res.value;
-      },
       providesTags: ["assignedDevs"],
     }),
 
@@ -95,10 +101,6 @@ const taskApi = createApi({
         url: `GetUnassignedDevs?taskId=${taskId}`,
         method: "GET",
       }),
-
-      transformResponse: (res) => {
-        return res.value;
-      },
 
       providesTags: ["assignedDevs"],
     }),
@@ -112,6 +114,7 @@ const taskApi = createApi({
       }),
 
       transformResponse: (res) => {
+        console.log(res);
         return res.value.map((user) => ({
           userName: user.users.firstName + " " + user.users.lastName,
           task: user.tasks.title,
