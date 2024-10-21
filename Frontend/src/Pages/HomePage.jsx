@@ -7,7 +7,7 @@ const HomePage = () => {
   const { userData, isAuthed } = useSelector((state) => state.user);
 
   if (!isAuthed) {
-    return <Navigate to='/login' />;
+    return <Navigate to='/Login' />;
   }
 
   return (

@@ -54,7 +54,7 @@ const RegisterPage = () => {
 
       setShowMessage(["Account Created Successfully", "success", true]); //Show the message with success
       setTimeout(() => {
-        navigate("/login");
+        navigate("/Login");
       }, 1000);
     } catch (err) {
       if (err.status == 400) setShowMessage([err.data, "error", true]);
@@ -97,7 +97,7 @@ const RegisterPage = () => {
           <span className='text-sm text-center text-neutral-100/50 '>
             Have an account
             <Link
-              to={"/login"}
+              to={"/Login"}
               className='underline cursor-pointer hover:bg-neutral-100 hover:text-neutral-950 px-1 py-0.5 transition duration-200 rounded-sm hover:no-underline'
             >
               Log in

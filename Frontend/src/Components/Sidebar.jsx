@@ -118,7 +118,7 @@ const Sidebar = () => {
                     <div className='bg-transparent h-5 w-full absolute -top-4 left-0 z-100' />
                     <Link
                       onClick={() => handleLogout()}
-                      to={"/login"}
+                      to={"/Login"}
                       className=' p-4 hover:underline flex gap-3 justify-center place-items-center'
                     >
                       <FiLogOut />
