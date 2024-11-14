@@ -57,7 +57,7 @@ const RegisterPage = () => {
         navigate("/Login");
       }, 1000);
     } catch (err) {
-      if (err.status == 400) setShowMessage([err.data, "error", true]);
+      if (err.status == 400) setShowMessage(["email already registered", "error", true]);
       else console.error("Error", err);
     }
   };

@@ -8,7 +8,7 @@ async function register(req, res) {
     return res.status(200).json({ msg: "User created successfully" });
   } catch (error) {
     console.error("Error creating user", error);
-    return res.status(500).json({ msg: "Error creating user" });
+    return res.status(400).json({ msg: "Error creating user" });
   }
 }
 
